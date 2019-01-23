@@ -1,0 +1,18 @@
+﻿@model EnglishWeb.Core.Models.ViewModels.RegisterUserVIewModel
+@{
+    ViewData["Title"] = "Register";
+}
+
+<h1>Register</h1>
+
+@Html.BeginForm(FormMethod.Post, true, new { @class = "test" })
+@Html.ValidationMessageFor(model => model.Name)
+@Html.EditorFor(model => model.Name, "", null)
+@Html.ValidationMessageFor(model => model.LastName)
+@Html.EditorFor(model => model.LastName, "", null)
+@Html.ValidationMessageFor(model => model.Email)
+@Html.EditorFor(model => model.Email, "", null)
+@Html.ValidationMessageFor(model => model.Password)
+@Html.EditorFor(model => model.Password, "", null)
+
+<button type="submit">Register</button>
