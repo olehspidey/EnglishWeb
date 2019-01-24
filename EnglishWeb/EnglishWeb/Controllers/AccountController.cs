@@ -14,7 +14,7 @@ namespace EnglishWeb.Controllers
         private readonly UserManager<User> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IMapper _mapper;
-        private SignInManager<User> _signInManager;
+        private readonly SignInManager<User> _signInManager;
 
         public AccountController(UserManager<User> userManager,
             RoleManager<IdentityRole> roleManager,
@@ -60,10 +60,8 @@ namespace EnglishWeb.Controllers
                 return View();
             }
 
-            if (!await _roleManager.RoleExistsAsync(model.UserRole))
-                await _roleManager.CreateAsync(new IdentityRole(model.UserRole));
-
             await _userManager.AddToRoleAsync(mapperUser, UserRoles.User);
+
             if (model.UserRole == UserRoles.User)
                 await _signInManager.SignInAsync(mapperUser, false);
 

@@ -6,7 +6,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using EnglishWeb.Data;
+using EnglishWeb.DAL;
 using EnglishWeb.MapperConfig;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -38,6 +40,13 @@ namespace EnglishWeb
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString(Environment.IsDevelopment() ? "DefaultConnection" : "ProductionConnection")));
+            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(options =>
+                {
+                    options.LoginPath = new PathString("/Account/Login");
+                    options.LogoutPath = new PathString("Account/LogOut");
+                });
 
             services.AddIdentity<User, IdentityRole>(options =>
             {

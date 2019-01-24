@@ -1,0 +1,23 @@
+﻿@model List<EnglishWeb.Core.Models.ViewModels.ArticleViewModel>
+@{
+    ViewData["Title"] = "My";
+}
+
+<style>
+    .articles-list {
+        padding: 0 15rem;
+    }
+</style>
+
+<h1>Мои статьи</h1>
+<br/>
+
+
+<ul class="list-group articles-list">
+    @foreach (var article in Model)
+    {
+        <li class="list-group-item">
+            <a asp-action="Index" asp-controller="Article" asp-route-id="@article.Id">@article.Name</a>
+        </li>
+    }
+</ul>

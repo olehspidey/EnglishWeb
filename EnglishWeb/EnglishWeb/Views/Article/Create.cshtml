@@ -1,0 +1,44 @@
+﻿@model EnglishWeb.Core.Models.ViewModels.CreateArticleViewModel
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Создать статью</h1>
+<br/>
+
+<style>
+    .create-article-form {
+        padding: 0 15rem;
+    }
+
+    .create-article-form input, textarea {
+        margin-bottom: 2rem;
+    }
+
+    .create-article-form textarea {
+        max-height: 15rem;
+    }
+</style>
+
+@using (Html.BeginForm(FormMethod.Post, true, new { @class = "create-article-form" }))
+{
+    if(ViewBag.Success == true)
+     {
+         <div class="alert alert-primary" role="alert">
+             Статья успешно добавлена
+         </div>
+    }
+    if(ViewBag.Success == false)
+    {
+        <div class="alert alert-danger" role="alert">
+            Ошибка. Невозможно добавить статью
+        </div>
+    }
+
+    @Html.ValidationSummary()
+    @Html.ValidationMessageFor(model => model.Name)
+    <input class="form-control" name="name" placeholder="Введите название статьи" />
+    @Html.ValidationMessageFor(model => model.Text)
+    <textarea class="form-control" name="text" placeholder="Текст статьи" ></textarea>
+    <input class="btn btn-primary" type="submit" value="Сохранить" />
+}

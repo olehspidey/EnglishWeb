@@ -12,5 +12,8 @@ namespace EnglishWeb.Data
         {
             Database.EnsureCreated();
         }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+            => optionsBuilder.UseLazyLoadingProxies();
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using EnglishWeb.Core.Models.DomainModels.Abstractions;
 using Microsoft.AspNetCore.Identity;
@@ -19,5 +20,7 @@ namespace EnglishWeb.Core.Models.DomainModels
         public string LastName { get; set; }
 
         public bool IsActive { get; set; }
+
+        public virtual List<Article> Articles { get; set; }
     }
 }

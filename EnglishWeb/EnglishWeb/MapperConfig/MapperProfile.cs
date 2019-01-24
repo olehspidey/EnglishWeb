@@ -10,6 +10,8 @@ namespace EnglishWeb.MapperConfig
         {
             CreateMap<RegisterUserVIewModel, User>()
                 .ForAllMembers(expression => expression.AllowNull());
+            CreateMap<CreateArticleViewModel, Article>()
+                .ForAllMembers(expression => expression.AllowNull());
         }
     }
 }
