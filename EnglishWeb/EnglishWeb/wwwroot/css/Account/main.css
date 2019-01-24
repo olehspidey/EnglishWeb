@@ -1,0 +1,13 @@
+﻿.register-form, .login-form {
+    display: flex;
+    flex-direction: column;
+    padding: 0 15rem;
+}
+
+.register-form label {
+    margin-top: 2rem;
+}
+
+.register-form input, .login-form input {
+    margin-top: 2rem;
+}

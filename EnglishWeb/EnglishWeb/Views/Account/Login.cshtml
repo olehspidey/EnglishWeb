@@ -1,0 +1,17 @@
+﻿@model EnglishWeb.Core.Models.ViewModels.LoginUserViewModel
+@{
+    ViewData["Title"] = "Login";
+}
+
+<h1>Login</h1>
+<link rel="stylesheet" href="~/css/Account/main.css" />
+
+@using (Html.BeginForm(FormMethod.Post, true, new { @class = "login-form" }))
+{
+    @Html.ValidationSummary()
+    @Html.ValidationMessageFor(model => model.Email)
+    <input class="form-control" name="email" placeholder="Введите свой email" />
+    @Html.ValidationMessageFor(model => model.Password)
+    <input class="form-control" type="password" name="password" placeholder="Введите свой пароль" />
+    <input class="btn btn-primary" type="submit" value="Войти" />
+}

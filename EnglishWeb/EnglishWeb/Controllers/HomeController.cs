@@ -1,16 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
+﻿using System.Diagnostics;
 using System.Threading.Tasks;
+using AutoMapper;
+using EnglishWeb.Core.Models.DomainModels;
+using EnglishWeb.Core.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using EnglishWeb.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace EnglishWeb.Controllers
 {
     public class HomeController : Controller
     {
-        public IActionResult Index()
+        private readonly UserManager<User> _userManager;
+        private readonly IMapper _mapper;
+
+        public HomeController(UserManager<User> userManager, IMapper mapper)
+        {
+            _userManager = userManager;
+            _mapper = mapper;
+        }
+
+        public async Task<IActionResult> Index()
         {
             return View();
         }

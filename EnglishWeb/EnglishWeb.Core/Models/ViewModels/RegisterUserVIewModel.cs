@@ -13,6 +13,10 @@ namespace EnglishWeb.Core.Models.ViewModels
         public string LastName { get; set; }
 
         [Required]
+        [MinLength(2)]
+        public string UserName { get; set; }
+
+        [Required]
         [EmailAddress]
         public string Email { get; set; }
 
@@ -20,5 +24,8 @@ namespace EnglishWeb.Core.Models.ViewModels
         [MinLength(6)]
         [DataType(DataType.Password)]
         public string Password { get; set; }
+
+        [Required]
+        public string UserRole { get; set; }
     }
 }

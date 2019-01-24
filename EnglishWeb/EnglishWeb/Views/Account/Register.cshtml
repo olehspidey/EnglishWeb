@@ -1,18 +1,31 @@
-﻿@model EnglishWeb.Core.Models.ViewModels.RegisterUserVIewModel
+﻿@using EnglishWeb.Core.Models
+@model EnglishWeb.Core.Models.ViewModels.RegisterUserVIewModel
+
 @{
     ViewData["Title"] = "Register";
 }
 
 <h1>Register</h1>
+<link rel="stylesheet" href="~/css/Account/main.css"/>
 
-@Html.BeginForm(FormMethod.Post, true, new { @class = "test" })
-@Html.ValidationMessageFor(model => model.Name)
-@Html.EditorFor(model => model.Name, "", null)
-@Html.ValidationMessageFor(model => model.LastName)
-@Html.EditorFor(model => model.LastName, "", null)
-@Html.ValidationMessageFor(model => model.Email)
-@Html.EditorFor(model => model.Email, "", null)
-@Html.ValidationMessageFor(model => model.Password)
-@Html.EditorFor(model => model.Password, "", null)
-
-<button type="submit">Register</button>
+@using (@Html.BeginForm(FormMethod.Post, true, new { @class = "register-form" }))
+{
+    @Html.ValidationSummary()
+    @Html.ValidationMessageFor(model => model.UserName)
+    <input class="form-control" name="userName" placeholder="Введите свой логин"/>
+    @Html.ValidationMessageFor(model => model.Name)
+    <input class="form-control" name="name" placeholder="Введите свое имя"/>
+    @Html.ValidationMessageFor(model => model.LastName)
+    <input class="form-control" name="lastName" placeholder="Введите свою фамилию"/>
+    @Html.ValidationMessageFor(model => model.Email)
+    <input class="form-control" name="email" type="email" placeholder="Введите свой email"/>
+    @Html.ValidationMessageFor(model => model.Password)
+    <input class="form-control" name="password" type="password" placeholder="Введите пароль"/>
+    <label for="roleSelect">Выберите роль</label>
+    @Html.ValidationMessageFor(model => model.UserRole)
+    <select id="roleSelect" class="form-control" name="UserRole">
+        <option value="@UserRoles.User">User</option>
+        <option value="@UserRoles.Teacher">Teacher</option>
+    </select>
+    <input class="btn btn-primary" type="submit" value="Зарегистрировать"/>
+}

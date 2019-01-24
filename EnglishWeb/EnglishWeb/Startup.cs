@@ -1,10 +1,12 @@
-﻿using EnglishWeb.Core.Models.DomainModels;
+﻿using AutoMapper;
+using EnglishWeb.Core.Models.DomainModels;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using EnglishWeb.Data;
+using EnglishWeb.MapperConfig;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -52,6 +54,7 @@ namespace EnglishWeb
                 .AddRoleManager<RoleManager<IdentityRole>>()
                 .AddDefaultTokenProviders();
 
+            services.AddAutoMapper(expression => expression.AddProfile(new MapperProfile()));
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 
