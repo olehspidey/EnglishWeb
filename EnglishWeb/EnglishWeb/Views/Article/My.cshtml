@@ -7,17 +7,48 @@
     .articles-list {
         padding: 0 15rem;
     }
+
+        .articles-list .list-group-item {
+            cursor: pointer;
+        }
+
+            .articles-list .list-group-item a {
+                display: block;
+                text-decoration: none;
+            }
+
+            .articles-list .list-group-item:hover {
+                background: #007bff;
+            }
+
+                .articles-list .list-group-item:hover {
+                    color: white !important;
+                }
+
+    .create-box {
+        width: 100%;
+        height: 100%;
+        padding: 2rem 15rem 0 15rem;
+    }
 </style>
 
 <h1>Мои статьи</h1>
-<br/>
+<br />
 
+@if (!Model.Any())
+{
+    <h3 class="text-center">У вас еще нету статей</h3>
+    <a class="btn btn-primary" role="button" asp-controller="Article" asp-action="Create">Создать</a>
+}
 
-<ul class="list-group articles-list">
+<div class="list-group articles-list">
     @foreach (var article in Model)
     {
-        <li class="list-group-item">
-            <a asp-action="Index" asp-controller="Article" asp-route-id="@article.Id">@article.Name</a>
-        </li>
+        <a class="list-group-item" asp-action="Index" asp-controller="Article" asp-route-id="@article.Id">@article.Name</a>
     }
-</ul>
+</div>
+
+<div class="create-box">
+    <a class="btn btn-primary" role="button" asp-controller="Article" asp-action="Create">Создать</a>
+</div>
+

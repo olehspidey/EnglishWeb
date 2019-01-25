@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@using EnglishWeb.Core.Models
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
@@ -34,6 +35,24 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
+                        @if (User.IsInRole(UserRoles.Teacher))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Упражнения</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Article" asp-action="My">Грамматика</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Фильмы</a>
+                            </li>
+                        }
+                        @if (User.IsInRole(UserRoles.User))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Article" asp-action="List">Грамматика</a>
+                            </li>
+                        }
                     </ul>
                     <ul class="navbar-nav">
                         @if (@User.Identity.IsAuthenticated)
@@ -43,7 +62,6 @@
                                     <a class="btn btn-secondary dropdown-toggle" asp-controller="Account" asp-action="/" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                         @User.Identity.Name
                                     </a>
-
                                     <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
                                         <a class="dropdown-item" href="#">Мой кабинет</a>
                                         <a class="dropdown-item" asp-controller="Account" asp-action="LogOut">Выйти</a>

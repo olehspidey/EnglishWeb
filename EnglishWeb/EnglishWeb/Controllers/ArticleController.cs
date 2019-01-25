@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using EnglishWeb.Core.Models;
@@ -8,9 +10,11 @@ using EnglishWeb.DAL;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace EnglishWeb.Controllers
 {
+    [Route("[controller]")]
     public class ArticleController : Controller
     {
         private readonly IRepository<Article> _articleRepository;
@@ -24,12 +28,42 @@ namespace EnglishWeb.Controllers
             _userManager = userManager;
         }
 
-        public IActionResult Index()
+        [HttpGet("List")]
+        public async Task<IActionResult> List()
         {
-            return View();
+            var articles = await _articleRepository
+                .Table
+                .Take(20)
+                .ToListAsync();
+
+            return View(_mapper.Map<List<Article>, List<ArticleViewModel>>(articles));
+        }
+
+        [HttpGet("{id}")]
+        [Authorize(Roles = UserRoles.UserTeacherAdmin)]
+        public async Task<IActionResult> Index(Guid? id)
+        {
+            if (id == null)
+            {
+                ModelState.AddModelError("ArticleError", "Icorrect article");
+
+                return RedirectToAction(nameof(HomeController.Index), "Home");
+            }
+
+            var article = await _articleRepository.GetByIdAsync(id);
+
+            if (article == null)
+            {
+                ModelState.AddModelError("ArticleError", "Article was not found");
+
+                return View();
+            }
+
+            return View(_mapper.Map<Article, ArticleViewModel>(article));
         }
 
         [Authorize(Roles = UserRoles.Teacher)]
+        [HttpGet("My")]
         public async Task<IActionResult> My()
         {
             var user = await _userManager.FindByNameAsync(User.Identity.Name);
@@ -45,7 +79,7 @@ namespace EnglishWeb.Controllers
         }
 
         [Authorize(Roles = UserRoles.Teacher)]
-        [HttpGet("[controller]/Create/{success?}")]
+        [HttpGet("Create/{success?}")]
         public IActionResult Create(bool? success)
         {
             if (success == true)
@@ -55,7 +89,7 @@ namespace EnglishWeb.Controllers
         }
 
         [Authorize(Roles = UserRoles.Teacher)]
-        [HttpPost]
+        [HttpPost("Create")]
         public async Task<IActionResult> Create(CreateArticleViewModel model)
         {
             if (!ModelState.IsValid)
