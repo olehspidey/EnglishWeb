@@ -1,0 +1,60 @@
+﻿@model List<EnglishWeb.Core.Models.ViewModels.ShortUserViewModel>
+@{
+    ViewData["Title"] = "Users";
+}
+<style>
+    .user-form {
+        padding: 0 15rem;
+    }
+
+    .user-list {
+        cursor: pointer;
+        padding: 2rem 15rem;
+    }
+
+    .user-list .list-group-item:hover {
+        background: #007bff;
+        color: white !important;
+    }
+
+    .box {
+        width: 1rem;
+        height: 1rem;
+        border-radius: 50%;
+    }
+
+    .active {
+        background: chartreuse;
+    }
+
+    .non-active {
+        background: crimson;
+    }
+</style>
+<h1>Пользователи</h1>
+
+<div>
+    @using (Html.BeginForm(FormMethod.Get, new { @class = "d-flex user-form" }))
+    {
+        <input class="form-control mr-2" name="query" placeholder="Введите даные пользователя" />
+        <button class="btn btn-primary">Поиск</button>
+    }
+    
+    <div class="list-group user-list">
+        @foreach (var user in Model)
+        {
+            var userName = $"{user.Name} {user.LastName}";
+            var activeClass = user.IsActive ? "active box" : "not-active box";
+
+            <a class="list-group-item">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <div>@userName</div>
+                        <small>@user.Email</small>
+                    </div>
+                    <div class="@activeClass"></div>
+                </div>
+            </a>
+        }
+    </div>
+</div>

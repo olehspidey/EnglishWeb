@@ -1,8 +1,6 @@
 ﻿using System.Diagnostics;
-using System.Threading.Tasks;
 using AutoMapper;
 using EnglishWeb.Core.Models.DomainModels;
-using EnglishWeb.Core.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using EnglishWeb.Models;
 using Microsoft.AspNetCore.Identity;
@@ -20,7 +18,7 @@ namespace EnglishWeb.Controllers
             _mapper = mapper;
         }
 
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
             return View();
         }

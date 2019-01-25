@@ -1,0 +1,26 @@
+﻿@model List<EnglishWeb.Core.Models.ViewModels.TestViewModel>
+@{
+    ViewData["Title"] = "My";
+}
+
+<style>
+
+</style>
+
+<h1>Мои тесты</h1>
+@if (!Model.Any())
+{
+    <h3 class="text-center">У вас еще нету тестов</h3>
+    <div class="justify-content-center d-flex">
+        <a class="btn btn-primary text-center" role="button" asp-controller="Test" asp-action="Create">Создать</a>
+    </div>
+}
+else
+{
+    <div class="list-group">
+        @foreach (var test in Model)
+        {
+            <a href="#" class="list-group-item list-group-item-action">@test.Name</a>
+        }
+    </div>
+}

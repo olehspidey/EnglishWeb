@@ -9,7 +9,19 @@ namespace EnglishWeb.DAL.Initializers
     {
         public static async Task InitAsync(UserManager<User> userManager)
         {
-            var user = new User
+            var superAdmin = CreateSuperAdmin();
+            var teacher = CreateTeacher();
+            const string password = "30Test30";
+
+            await userManager.CreateAsync(superAdmin, password);
+            await userManager.CreateAsync(teacher, password);
+            await userManager.AddToRoleAsync(superAdmin, UserRoles.Admin);
+            await userManager.AddToRoleAsync(superAdmin, UserRoles.Teacher);
+            await userManager.AddToRoleAsync(teacher, UserRoles.Teacher);
+        }
+
+        private static User CreateSuperAdmin()
+            => new User
             {
                 Name = "Admin",
                 LastName = "Admin",
@@ -19,8 +31,15 @@ namespace EnglishWeb.DAL.Initializers
                 IsActive = true
             };
 
-            await userManager.CreateAsync(user, "30Test30");
-            await userManager.AddToRoleAsync(user, UserRoles.Admin);
-        }
+        private static User CreateTeacher()
+            => new User
+            {
+                Name = "Teacher",
+                LastName = "Teacher",
+                Email = "teacher@gmail.com",
+                UserName = "teacher",
+                EmailConfirmed = true,
+                IsActive = true
+            };
     }
 }

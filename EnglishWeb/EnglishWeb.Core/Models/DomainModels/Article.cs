@@ -14,8 +14,15 @@ namespace EnglishWeb.Core.Models.DomainModels
 
         public ArticleType Type { get; set; }
 
+        public DateTime CreatedDate { get; set; }
+
         public Guid UserId { get; set; }
 
         public virtual User User { get; set; }
+
+        public Article()
+        {
+            CreatedDate = DateTime.UtcNow;
+        }
     }
 }

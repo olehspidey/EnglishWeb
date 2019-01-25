@@ -22,5 +22,7 @@ namespace EnglishWeb.Core.Models.DomainModels
         public bool IsActive { get; set; }
 
         public virtual List<Article> Articles { get; set; }
+
+        public virtual List<Test> Tests { get; set; }
     }
 }

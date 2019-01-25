@@ -38,7 +38,7 @@
                         @if (User.IsInRole(UserRoles.Teacher))
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Упражнения</a>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Test" asp-action="My">Упражнения</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Article" asp-action="My">Грамматика</a>
@@ -64,6 +64,10 @@
                                     </a>
                                     <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
                                         <a class="dropdown-item" href="#">Мой кабинет</a>
+                                        @if (User.IsInRole(UserRoles.Admin))
+                                        {
+                                            <a class="dropdown-item" asp-controller="Admin" asp-action="Users">Пользователи</a>
+                                        }
                                         <a class="dropdown-item" asp-controller="Account" asp-action="LogOut">Выйти</a>
                                     </div>
                                 </div>
