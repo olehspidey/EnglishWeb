@@ -25,6 +25,15 @@
         var model = generateModel();
         var succesMessage = $("#successMessage");
         var errorMessage = $("#errorMessage");
+        var checkingResult = checkAllFields();
+
+        if (!checkingResult.status) {
+            succesMessage.hide();
+            errorMessage.html(checkingResult.message);
+            errorMessage.show();
+
+            return;
+        }
 
         console.log(model);
 
@@ -57,6 +66,8 @@
         templateClone.find("[q-number]").html("Вопрос " + questionsNumber);
         templateClone.find("[q-number]").attr("q-number", questionsNumber);
         templateClone.attr("id", "qTemplate" + questionsNumber);
+        templateClone.find(".q-name").val("");
+        templateClone.find(".q-answer").val("");
         $(".questions").append(templateClone);
 
         binCheckBoxed(templateClone);
@@ -84,7 +95,7 @@
                     isTrue: $(answersBoxes[j]).find("[type='checkbox']").is(":checked")
                 });
 
-                form.append("images", $(answersBoxes[j]).find("[type='file']")[0].files[0]);
+                testType === 1 && form.append("images", $(answersBoxes[j]).find("[type='file']")[0].files[0]);
             }
 
             model.questions.push({
@@ -96,4 +107,56 @@
         }
         return form;
     }
+
+    function checkAllFields() {
+        if (!checkField($("#testName").val()))
+            return {
+                message: "Please enter test name. Test name length must be > 2",
+                status: false
+            };
+
+        var templates = $(".q-template");
+
+        if (!templates.length)
+            return {
+                message: "Questions was not found. Pease add question",
+                status: false
+            };
+
+        for (var i = 0; i < templates.length; i++) {
+            var questionName = $(templates[i]).find(".q-name").val();
+
+            if (!checkField(questionName))
+                return {
+                    message: "Please fill all question names. Question name length must be > 2",
+                    status: false
+                };
+
+            var answers = $(templates[i]).find(".q-answer");
+
+            for (var j = 0; j < answers.length; j++) {
+                if (!checkField($(answers[j]).val()))
+                    return {
+                        message: "Please fill all answers. Answer name length must be > 2",
+                        status: false
+                    };
+            }
+
+            var checkBoxes = $(templates[i]).find("[type='checkbox']");
+
+            if (!checkBoxes.toArray().some(cb => $(cb).is(":checked")))
+                return {
+                    message: "Please check all checkboxes",
+                    status: false
+                };
+        }
+
+
+        return {
+            message: "Success",
+            status: true
+        };
+    }
+
+    const checkField = val => val && val.length > 2;
 }
