@@ -1,0 +1,60 @@
+﻿@using EnglishWeb.Core.Models.DomainModels
+@{
+    ViewData["Title"] = "CreateRadio";
+}
+
+@{
+    var testType = (int)ViewBag.TestType;
+}
+
+@section Scripts
+    {
+    <script type="text/javascript" src="~/js/Test/createRadioAndInput.js"></script>
+}
+
+<style>
+    .test-form {
+        padding: 2rem 15rem;
+    }
+</style>
+
+<h1>Создать @ViewBag.TestType тест</h1>
+
+<div id="successMessage" class="alert alert-primary" style="display:none" role="alert">
+    Success
+</div>
+
+<div id="errorMessage" class="alert alert-danger" style="display: none" role="alert">
+    Error
+</div>
+
+<div class="test-form">
+    <input class="form-control" id="testName" placeholder="Введите название теста" />
+    <div class="questions">
+        <div id="qTemplate1">
+            <label q-number="1">Вопрос 1</label>
+            <input class="form-control q-name" placeholder="Введите название вопроса" />
+            <label>Ответы</label>
+            <div class="d-flex align-items-center q-a-box">
+                <input class="form-control q-answer mr-2" placeholder="Введите ответ" />
+                <input type="checkbox" />
+            </div>
+            <div class="d-flex align-items-center q-a-box">
+                <input class="form-control q-answer mr-2" placeholder="Введите ответ" />
+                <input type="checkbox" />
+            </div>
+            <div class="d-flex align-items-center q-a-box">
+                <input class="form-control q-answer mr-2" placeholder="Введите ответ" />
+                <input type="checkbox" />
+            </div>
+        </div>
+    </div>
+    <button class="btn btn-success mt-2" id="newQuestion">Добавить новый вопрос</button>
+    <input id="createButton" class="btn btn-primary mt-2" type="button" role="button" value="Создать" />
+</div>
+
+<script type="text/javascript">
+    document.addEventListener("DOMContentLoaded", function(event) {
+        init(Number(@testType));
+    });
+</script>

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Net;
 using System.Threading.Tasks;
 using AutoMapper;
 using EnglishWeb.Core.Models;
@@ -47,23 +48,58 @@ namespace EnglishWeb.Controllers
             return View();
         }
 
+        [HttpGet("ChooseType")]
+        public IActionResult ChooseType(TestType testType)
+        {
+            switch (testType)
+            {
+                case TestType.Image:
+                    return RedirectToAction(nameof(CreateImage), "Test");
+                case TestType.Input:
+                    return RedirectToAction(nameof(CreateInput), "Test");
+                case TestType.Radio:
+                    return RedirectToAction(nameof(CreateRadioAndInput), "Test");
+            }
+
+            return View();
+        }
+
+        [HttpGet("CreateRadioAndInput")]
+        public IActionResult CreateRadioAndInput()
+        {
+            ViewBag.TestType = TestType.Radio;
+
+            return View();
+        }
+
+        [HttpGet("CreateImage")]
+        public IActionResult CreateImage()
+            => View();
+
+        [HttpGet("CreateInput")]
+        public IActionResult CreateInput()
+        {
+            ViewBag.TestType = TestType.Input;
+
+            return View("CreateRadioAndInput");
+        }
+
         [HttpPost("Create")]
+        [Authorize(Roles = UserRoles.Teacher)]
         public async Task<IActionResult> Create(CreateTestViewModel model)
         {
             if (!ModelState.IsValid)
             {
-                ModelState.AddModelError("ModelError", "Invalid model");
-
-                return View();
+                Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                 return Json("Invalid model");
             }
 
             var user = await _userManager.FindByNameAsync(User.Identity.Name);
 
             if (user == null)
             {
-                ModelState.AddModelError("UserError", "User was not found");
-
-                return View();
+                Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                return Json("User was not found");
             }
 
             var test = _mapper.Map<CreateTestViewModel, Test>(model);
@@ -75,8 +111,10 @@ namespace EnglishWeb.Controllers
             var updateResult = await _userManager.UpdateAsync(user);
 
             if (updateResult.Succeeded)
-                return RedirectToAction(nameof(TestController.Create), "Test", new {success = true});
-            return RedirectToAction(nameof(TestController.Create), "Test", new { success = false });
+                return Json("Success");
+
+            Response.StatusCode = (int)HttpStatusCode.BadRequest;
+            return Json("Can't save");
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using EnglishWeb.Core.Models.DomainModels;
 
 namespace EnglishWeb.Core.Models.ViewModels
 {
@@ -9,6 +10,8 @@ namespace EnglishWeb.Core.Models.ViewModels
         public string Name { get; set; }
 
         [MinLength(1)]
-        public List<QuestionViewModel> QuestionsList { get; set; }
+        public List<QuestionViewModel> Questions { get; set; }
+
+        public TestType Type { get; set; }
     }
 }

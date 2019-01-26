@@ -6,13 +6,6 @@
     <LangVersion>7.3</LangVersion>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Remove="wwwroot\js\NewFolder\**" />
-    <Content Remove="wwwroot\js\NewFolder\**" />
-    <EmbeddedResource Remove="wwwroot\js\NewFolder\**" />
-    <None Remove="wwwroot\js\NewFolder\**" />
-  </ItemGroup>
-
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="8.0.0" />

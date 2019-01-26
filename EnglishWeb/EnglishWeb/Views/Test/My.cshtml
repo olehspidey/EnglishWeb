@@ -4,7 +4,14 @@
 }
 
 <style>
+    .test-list {
+        padding: 2rem 15rem;
+    }
 
+    .test-list .list-group-item:hover {
+        background: #007bff;
+        color: white !important;
+    }
 </style>
 
 <h1>Мои тесты</h1>
@@ -17,10 +24,13 @@
 }
 else
 {
-    <div class="list-group">
+    <div class="list-group test-list">
         @foreach (var test in Model)
         {
             <a href="#" class="list-group-item list-group-item-action">@test.Name</a>
         }
+    </div>
+    <div class="justify-content-center d-flex">
+        <a class="btn btn-primary text-center" role="button" asp-controller="Test" asp-action="Create">Создать</a>
     </div>
 }
