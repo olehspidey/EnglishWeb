@@ -9,6 +9,7 @@ using EnglishWeb.Data;
 using EnglishWeb.DAL;
 using EnglishWeb.MapperConfig;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -64,6 +65,7 @@ namespace EnglishWeb
                 .AddDefaultTokenProviders();
 
             services.AddAutoMapper(expression => expression.AddProfile(new MapperProfile()));
+            services.Configure<FormOptions>(x => x.ValueCountLimit = int.MaxValue);
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 

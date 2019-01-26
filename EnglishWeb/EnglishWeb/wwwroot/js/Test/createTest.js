@@ -32,6 +32,8 @@
             method: "POST",
             url: "/Test/Create",
             data: model,
+            processData: false,
+            contentType: false,
             success: resp => {
                 if (resp === "Success") {
 	                succesMessage.html("Тест создан успешно");
@@ -64,8 +66,12 @@
         var model = {
             name: $("#testName").val(),
             questions: [],
-            type: testType
+            type: testType,
+            images:[]
         };
+        var form = new FormData();
+        form.append("name", model.name);
+        form.append("type", model.type);
 
         for (var i = 1; i < questionsNumber + 1; i++) {
             var template = $("#qTemplate" + i);
@@ -77,14 +83,17 @@
                     text: $(answersBoxes[j]).find(".q-answer").val(),
                     isTrue: $(answersBoxes[j]).find("[type='checkbox']").is(":checked")
                 });
+
+                form.append("images", $(answersBoxes[j]).find("[type='file']")[0].files[0]);
             }
 
             model.questions.push({
                 name: template.find(".q-name").val(),
                 answers
             });
-        }
 
-        return model;
+            form.append("qStringified", JSON.stringify(model.questions));
+        }
+        return form;
     }
 }

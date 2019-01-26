@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -8,6 +9,7 @@ using EnglishWeb.Core.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace EnglishWeb.Controllers
 {
@@ -74,7 +76,11 @@ namespace EnglishWeb.Controllers
 
         [HttpGet("CreateImage")]
         public IActionResult CreateImage()
-            => View();
+        {
+            ViewBag.TestType = TestType.Image;
+
+            return View();
+        }
 
         [HttpGet("CreateInput")]
         public IActionResult CreateInput()
@@ -86,8 +92,28 @@ namespace EnglishWeb.Controllers
 
         [HttpPost("Create")]
         [Authorize(Roles = UserRoles.Teacher)]
-        public async Task<IActionResult> Create(CreateTestViewModel model)
+        public async Task<IActionResult> Create([FromForm] CreateTestViewModel model)
         {
+            model.Questions = JsonConvert.DeserializeObject<List<QuestionViewModel>>(model.QStringified);
+
+            if (model.Type == TestType.Image)
+            {
+                var index = 0;
+
+                model.Questions.ForEach(question =>
+                {
+                    question.Answers.ForEach(async answer =>
+                    {
+                        using (var stream = model.Images[index].OpenReadStream())
+                        {
+                            answer.Image = new byte[stream.Length];
+                            await stream.ReadAsync(answer.Image);
+                        }
+                        index++;
+                    });
+                });
+            }
+
             if (!ModelState.IsValid)
             {
                 Response.StatusCode = (int)HttpStatusCode.BadRequest;

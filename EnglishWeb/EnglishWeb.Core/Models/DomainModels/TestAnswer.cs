@@ -11,6 +11,8 @@ namespace EnglishWeb.Core.Models.DomainModels
 
         public bool IsTrue { get; set; }
 
+        public byte[] Image { get; set; }
+
         public virtual Question Question { get; set; }
 
         public Guid QuestionId { get; set; }
