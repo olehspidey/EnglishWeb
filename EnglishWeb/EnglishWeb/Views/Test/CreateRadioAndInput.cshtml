@@ -8,7 +8,7 @@
 }
 
 @section Scripts
-{
+    {
     <script type="text/javascript" src="~/js/Test/createTest.js"></script>
 }
 
@@ -35,18 +35,28 @@
             <label q-number="1">Вопрос 1</label>
             <input class="form-control q-name" placeholder="Введите название вопроса" />
             <label>Ответы</label>
-            <div class="d-flex align-items-center q-a-box">
-                <input class="form-control q-answer mr-2" placeholder="Введите ответ" />
-                <input type="checkbox" />
-            </div>
-            <div class="d-flex align-items-center q-a-box">
-                <input class="form-control q-answer mr-2" placeholder="Введите ответ" />
-                <input type="checkbox" />
-            </div>
-            <div class="d-flex align-items-center q-a-box">
-                <input class="form-control q-answer mr-2" placeholder="Введите ответ" />
-                <input type="checkbox" />
-            </div>
+            @if (ViewBag.TestType == TestType.Radio)
+            {
+                <div class="d-flex align-items-center q-a-box">
+                    <input class="form-control q-answer mr-2" placeholder="Введите ответ" />
+                    <input type="checkbox" />
+                </div>
+                <div class="d-flex align-items-center q-a-box">
+                    <input class="form-control q-answer mr-2" placeholder="Введите ответ" />
+                    <input type="checkbox" />
+                </div>
+                <div class="d-flex align-items-center q-a-box">
+                    <input class="form-control q-answer mr-2" placeholder="Введите ответ" />
+                    <input type="checkbox" />
+                </div>
+            }
+            else
+            {
+                <div class="d-flex align-items-center q-a-box">
+                    <input class="form-control q-answer mr-2" placeholder="Введите ответ" />
+                    <input type="checkbox" checked="checked" disabled="disabled"/>
+                </div>
+            }
         </div>
     </div>
     <button class="btn btn-success mt-2" id="newQuestion">Добавить новый вопрос</button>

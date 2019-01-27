@@ -148,7 +148,7 @@ namespace EnglishWeb.Controllers
             if (!ModelState.IsValid)
             {
                 Response.StatusCode = (int)HttpStatusCode.BadRequest;
-                 return Json("Invalid model");
+                return Json("Invalid model");
             }
 
             var user = await _userManager.FindByNameAsync(User.Identity.Name);
@@ -179,24 +179,37 @@ namespace EnglishWeb.Controllers
         public async Task<IActionResult> Pass(PassTestViewModel model)
         {
             if (!ModelState.IsValid)
-                return View();
+                return BadRequest("Inalid model");
 
             var test = await _testsRepository.GetByIdAsync(model.Id);
 
             if (test == null)
+                return BadRequest("Test was not found");
+
+            var result = (0, 0, 0);
+
+            if (model.Type == TestType.Radio)
+                result = GetPassRadioResult(test.Questions, model.AnswersId);
+            if (model.Type == TestType.Input)
+                result = GetPassInputResult(test.Questions, model.Answers);
+
+            return Json(new PassedTestResultViewModel
             {
-                ModelState.AddModelError("TestError", "Test was not found");
+                FalseCount = result.Item1,
+                TrueCount = result.Item2,
+                QuestionsCount = result.Item3
+            });
+        }
 
-                return View();
-            }
-
+        private static (int, int, int) GetPassRadioResult(List<Question> questions, List<Guid> answersId)
+        {
             var falseCount = 0;
             var trueCount = 0;
 
-            test.Questions.ForEach(question =>
+            questions.ForEach(question =>
             {
                 var trueAnswers = question.Answers.Where(answer => answer.IsTrue);
-                var userAnswer = trueAnswers.FirstOrDefault(answer => model.AnswersId.Contains(answer.Id));
+                var userAnswer = trueAnswers.FirstOrDefault(answer => answersId.Contains(answer.Id));
 
                 if (userAnswer == null)
                     falseCount++;
@@ -204,12 +217,26 @@ namespace EnglishWeb.Controllers
                     trueCount++;
             });
 
-            return Json(new PassedTestResultViewModel
+            return (falseCount, trueCount, questions.Count);
+        }
+
+        private static (int, int, int) GetPassInputResult(List<Question> questions, List<string> answers)
+        {
+            var falseCount = 0;
+            var trueCount = 0;
+
+            questions.ForEach(question =>
             {
-                FalseCount = falseCount,
-                TrueCount = trueCount,
-                QuestionsCount = test.Questions.Count
+                var trueAnswers = question.Answers.Where(answer => answer.IsTrue);
+                var userAnswer = trueAnswers.FirstOrDefault(answer => answers.Contains(answer.Text));
+
+                if (userAnswer == null)
+                    falseCount++;
+                else
+                    trueCount++;
             });
+
+            return (falseCount, trueCount, questions.Count);
         }
     }
 }

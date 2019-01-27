@@ -1,20 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using EnglishWeb.Core.Models.DomainModels;
 
 namespace EnglishWeb.Core.Models.ViewModels
 {
-    public class PassTestViewModel
+    public class PassInputTestViewModel
     {
         [Required]
         public Guid Id { get; set; }
 
-        public List<Guid> AnswersId { get; set; }
-
-        public List<string> Answers { get; set; }
-
         [Required]
-        public TestType Type { get; set; }
+        [MinLength(1)]
+        public List<string> Answers { get; set; }
     }
 }
