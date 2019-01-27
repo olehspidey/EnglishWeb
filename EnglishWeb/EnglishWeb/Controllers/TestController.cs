@@ -29,13 +29,13 @@ namespace EnglishWeb.Controllers
             IMapper mapper,
             IRepository<Test> testsRepository,
             IRepository<TestAnswer> answersRepository,
-            IRepository<PassedTest> ressedTestsRepository)
+            IRepository<PassedTest> passedTestsRepository)
         {
             _userManager = userManager;
             _mapper = mapper;
             _testsRepository = testsRepository;
             _answersRepository = answersRepository;
-            _passedTestsRepository = ressedTestsRepository;
+            _passedTestsRepository = passedTestsRepository;
         }
 
         [HttpGet("{id}")]
@@ -43,33 +43,44 @@ namespace EnglishWeb.Controllers
         public async Task<IActionResult> Index(Guid? id)
         {
             if (id == null)
-            {
-                ModelState.AddModelError("ModelError", "Invalid id");
-
-                return View();
-            }
+                return RedirectToAction(nameof(HomeController.NotFound), "Home");
 
             var test = await _testsRepository.GetByIdAsync(id);
 
             if (test == null)
-            {
-                ModelState.AddModelError("ModelError", "Test was not found");
-
-                return View();
-            }
+                return RedirectToAction(nameof(HomeController.NotFound), "Home");
 
             var user = await _userManager.FindByNameAsync(User.Identity.Name);
 
             if (user == null)
-            {
-                return RedirectToAction(nameof(HomeController.Error), "Home");
-            }
+                return RedirectToAction(nameof(HomeController.NotFound), "Home");
 
             var mappedTest = _mapper.Map<Test, TestViewModel>(test);
 
             mappedTest.IsComplated = user.PassedTests.Any(t => t.TestId == mappedTest.Id);
 
             return View(mappedTest);
+        }
+
+        [HttpGet("Passed/{id}")]
+        [Authorize]
+        public async Task<IActionResult> Passed(Guid id)
+        {
+            var user = await _userManager.FindByNameAsync(User.Identity.Name);
+
+            if (user == null)
+                return BadRequest("User was not found");
+
+
+            var passedTest = await _testsRepository
+                .Table
+                .Join(user.PassedTests,
+                    test => test.Id,
+                    pTest => pTest.TestId,
+                    (lTest, pTestR) => pTestR)
+                .FirstOrDefaultAsync();
+
+            return Json(_mapper.Map<PassedTest, PassedTestViewModel>(passedTest));
         }
 
         [HttpGet("List")]
@@ -84,6 +95,7 @@ namespace EnglishWeb.Controllers
         }
 
         [HttpGet("Image/{answerId}")]
+        [ResponseCache(Duration = 3600, Location = ResponseCacheLocation.Any)]
         public async Task<IActionResult> Image(Guid answerId)
         {
             var answer = await _answersRepository.GetByIdAsync(answerId);
@@ -95,19 +107,27 @@ namespace EnglishWeb.Controllers
         }
 
         [HttpGet("My")]
-        [Authorize]
+        [Authorize(Roles = UserRoles.Teacher)]
         public async Task<IActionResult> My()
         {
             var user = await _userManager.FindByNameAsync(User.Identity.Name);
 
             if (user == null)
-            {
-                ModelState.AddModelError("UserError", "User was not found");
-
-                return View();
-            }
+                return RedirectToAction(nameof(HomeController.NotFound), "Home");
 
             return View(_mapper.Map<List<Test>, List<TestViewModel>>(user.Tests));
+        }
+
+        [HttpGet("MyPassed")]
+        [Authorize]
+        public async Task<IActionResult> MyPassed()
+        {
+            var user = await _userManager.FindByNameAsync(User.Identity.Name);
+
+            if (user == null)
+                return RedirectToAction(nameof(HomeController.NotFound), "Home");
+
+            return View(user.PassedTests);
         }
 
         [HttpGet("Create/{success?}")]
@@ -133,7 +153,7 @@ namespace EnglishWeb.Controllers
                     return RedirectToAction(nameof(CreateRadioAndInput), "Test");
             }
 
-            return View();
+            return RedirectToAction(nameof(HomeController.NotFound), "Home");
         }
 
         [HttpGet("CreateRadioAndInput")]
@@ -216,8 +236,7 @@ namespace EnglishWeb.Controllers
             if (updateResult.Succeeded)
                 return Json("Success");
 
-            Response.StatusCode = (int)HttpStatusCode.BadRequest;
-            return Json("Can't save");
+            return BadRequest("Can't save");
         }
 
         [HttpPost("Pass")]

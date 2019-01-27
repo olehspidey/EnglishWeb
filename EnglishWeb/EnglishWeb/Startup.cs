@@ -9,7 +9,6 @@ using EnglishWeb.Data;
 using EnglishWeb.DAL;
 using EnglishWeb.MapperConfig;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

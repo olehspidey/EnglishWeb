@@ -27,7 +27,7 @@
         background: chartreuse;
     }
 
-    .non-active {
+    .not-active {
         background: crimson;
     }
 </style>
@@ -52,7 +52,15 @@
                         <div>@userName</div>
                         <small>@user.Email</small>
                     </div>
-                    <div class="@activeClass"></div>
+                    <div class="d-flex flex-column align-items-end">
+                        <div class="@activeClass"></div>
+                        @if (!user.IsActive)
+                        {
+                            <form asp-controller="Admin" asp-action="Activate" asp-route-id="@user.Id" method="post">
+                                <button class="btn btn-sm btn-outline-secondary mt-2" type="submit">Активировать</button>
+                            </form>
+                        }
+                    </div>
                 </div>
             </a>
         }

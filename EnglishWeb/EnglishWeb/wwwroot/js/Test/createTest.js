@@ -137,12 +137,15 @@
 
             var answers = $(templates[i]).find(".q-answer");
 
-            for (var j = 0; j < answers.length; j++) {
-                if (!checkField($(answers[j]).val()))
-                    return {
-                        message: "Please fill all answers. Answer name length must be > 2",
-                        status: false
-                    };
+            // if not image test
+            if (testType !== 1) {
+                for (var j = 0; j < answers.length; j++) {
+                    if (!checkField($(answers[j]).val()))
+                        return {
+                            message: "Please fill all answers. Answer name length must be > 2",
+                            status: false
+                        };
+                }
             }
 
             var checkBoxes = $(templates[i]).find("[type='checkbox']");

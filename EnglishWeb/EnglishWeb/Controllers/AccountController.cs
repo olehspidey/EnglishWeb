@@ -60,7 +60,7 @@ namespace EnglishWeb.Controllers
                 return View();
             }
 
-            await _userManager.AddToRoleAsync(mapperUser, UserRoles.User);
+            await _userManager.AddToRoleAsync(mapperUser, model.UserRole);
 
             if (model.UserRole == UserRoles.User)
                 await _signInManager.SignInAsync(mapperUser, false);
@@ -81,8 +81,11 @@ namespace EnglishWeb.Controllers
             var user = await _userManager.FindByEmailAsync(model.Email);
 
             if (user == null)
+                return RedirectToAction(nameof(HomeController.NotFound), "Home");
+
+            if (!user.IsActive)
             {
-                ModelState.AddModelError("UserError", "User was not found");
+                ModelState.AddModelError("User", "You are not activated");
 
                 return View();
             }

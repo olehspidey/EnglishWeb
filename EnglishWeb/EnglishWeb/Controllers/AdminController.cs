@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -13,6 +14,7 @@ using Microsoft.EntityFrameworkCore;
 namespace EnglishWeb.Controllers
 {
     [Route("[controller]")]
+    [Authorize(Roles = UserRoles.Admin)]
     public class AdminController : Controller
     {
         private readonly UserManager<User> _userManager;
@@ -25,11 +27,25 @@ namespace EnglishWeb.Controllers
         }
 
         [HttpGet("Users")]
-        [Authorize(Roles = UserRoles.Admin)]
         public async Task<IActionResult> Users()
             => View(_mapper.Map<List<User>, List<ShortUserViewModel>>(await _userManager
                 .Users
                 .Take(20)
                 .ToListAsync()));
+
+        [HttpPost("Activate/{id}")]
+        public async Task<IActionResult> Activate(Guid id)
+        {
+            var user = await _userManager.FindByIdAsync(id.ToString());
+
+            if (user == null)
+                return RedirectToAction(nameof(HomeController.NotFound), "Home");
+
+            user.IsActive = true;
+
+            await _userManager.UpdateAsync(user);
+
+            return RedirectToAction(nameof(Users), "Admin");
+        }
     }
 }

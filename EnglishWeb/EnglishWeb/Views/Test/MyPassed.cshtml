@@ -1,0 +1,36 @@
+﻿@model List<EnglishWeb.Core.Models.DomainModels.PassedTest>
+@{
+    ViewData["Title"] = "MyPassed";
+}
+
+<style>
+    .test-list {
+        padding: 2rem 15rem;
+    }
+
+    .test-list .list-group-item:hover {
+        background: #007bff;
+        color: white !important;
+    }
+</style>
+
+<h1>Мои тесты</h1>
+@if (!Model.Any())
+{
+    <h3 class="text-center">Вы еще не сдавали никаких тестов</h3>
+}
+else
+{
+    <div class="list-group test-list">
+        @foreach (var test in Model)
+        {
+            <a asp-controller="Test" asp-action="Index" asp-route-id="@test.TestId" class="list-group-item list-group-item-action">
+                <h6>@test.Test.Name</h6>
+                <div class="d-flex flex-column">
+                    <small>Количество праильных ответов @test.TrueAnswersCount</small>
+                    <small>Количество непраильных ответов @test.FalseAnswersCount</small>
+                </div>
+            </a>
+        }
+    </div>
+}
