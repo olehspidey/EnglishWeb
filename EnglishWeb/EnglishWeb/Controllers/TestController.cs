@@ -21,17 +21,20 @@ namespace EnglishWeb.Controllers
         private readonly UserManager<User> _userManager;
         private readonly IRepository<Test> _testsRepository;
         private readonly IRepository<TestAnswer> _answersRepository;
+        private readonly IRepository<PassedTest> _passedTestsRepository;
         private readonly IMapper _mapper;
 
         public TestController(UserManager<User> userManager,
             IMapper mapper,
             IRepository<Test> testsRepository,
-            IRepository<TestAnswer> answersRepository)
+            IRepository<TestAnswer> answersRepository,
+            IRepository<PassedTest> ressedTestsRepository)
         {
             _userManager = userManager;
             _mapper = mapper;
             _testsRepository = testsRepository;
             _answersRepository = answersRepository;
+            _passedTestsRepository = ressedTestsRepository;
         }
 
         [HttpGet("{id}")]
@@ -206,12 +209,29 @@ namespace EnglishWeb.Controllers
             if (test == null)
                 return BadRequest("Test was not found");
 
+            var user = await _userManager.FindByNameAsync(User.Identity.Name);
+
+            if (user == null)
+                return BadRequest("User was not found");
+
             var result = (0, 0, 0);
 
             if (model.Type == TestType.Radio || model.Type == TestType.Image)
                 result = GetPassRadioResult(test.Questions, model.AnswersId);
             if (model.Type == TestType.Input)
                 result = GetPassInputResult(test.Questions, model.Answers);
+
+            var existedTest = user.PassedTests.FirstOrDefault((passedTest => passedTest.TestId == test.Id));
+
+            if (existedTest != null)
+            {
+                existedTest.FalseAnswersCount = result.Item1;
+                existedTest.TrueAnswersCount = result.Item2;
+
+                await _passedTestsRepository.UpdateAsync(existedTest);
+            }
+            else
+                await _passedTestsRepository.InsertAsync(PassedTest.CreateFromTest(result.Item2, result.Item1, test, user));
 
             return Json(new PassedTestResultViewModel
             {

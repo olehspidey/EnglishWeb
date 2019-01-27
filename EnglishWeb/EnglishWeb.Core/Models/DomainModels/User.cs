@@ -24,5 +24,7 @@ namespace EnglishWeb.Core.Models.DomainModels
         public virtual List<Article> Articles { get; set; }
 
         public virtual List<Test> Tests { get; set; }
+
+        public virtual List<PassedTest> PassedTests { get; set; }
     }
 }
