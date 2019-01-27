@@ -12,6 +12,8 @@ namespace EnglishWeb.Core.Models.ViewModels
 
         public ArticleType Type { get; set; }
 
+        public User User { get; set; }
+
         public DateTime CreatedDate { get; set; }
     }
 }

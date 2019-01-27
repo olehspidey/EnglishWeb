@@ -43,7 +43,10 @@ else
     <div class="list-group articles-list">
         @foreach (var article in Model)
         {
-            <a class="list-group-item" asp-action="Index" asp-controller="Article" asp-route-id="@article.Id">@article.Name</a>
+            <a class="list-group-item" asp-action="Index" asp-controller="Article" asp-route-id="@article.Id">
+                <h6>@article.Name</h6>
+                <small>@article.User.Name @article.User.LastName</small>
+            </a>
         }
     </div>
 }
