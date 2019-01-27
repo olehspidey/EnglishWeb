@@ -33,6 +33,8 @@
             errorMessage.show();
 
             return;
+        } else {
+            errorMessage.hide();
         }
 
         console.log(model);
@@ -45,12 +47,13 @@
             contentType: false,
             success: resp => {
                 if (resp === "Success") {
-	                succesMessage.html("Тест создан успешно");
+                    succesMessage.html("Тест создан успешно");
                     errorMessage.hide();
                     succesMessage.show();
                 }
             },
             error: er => {
+                errorMessage.html(er.responseText);
                 errorMessage.show();
                 succesMessage.hide();
             }
@@ -78,7 +81,7 @@
             name: $("#testName").val(),
             questions: [],
             type: testType,
-            images:[]
+            images: []
         };
         var form = new FormData();
         form.append("name", model.name);
@@ -149,6 +152,14 @@
                     message: "Please check all checkboxes",
                     status: false
                 };
+        }
+
+        // check if images
+        if (testType === 1 && $("[type='file']").toArray().some(file => !file.files.length)) {
+            return {
+                message: "Please choose all images",
+                status: false
+            };
         }
 
 

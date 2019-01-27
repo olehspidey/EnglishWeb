@@ -20,12 +20,11 @@
         var checkedResult = false;
         var model = null;
 
-        if (testType === 0) {
-            checkedResult = checkRadioModel();
+        if (testType === 0 || testType === 1) {
+            checkedResult = checkRadioAndImageModel();
             model = generateModel();
         }
-        if (testType === 1)
-            checkedResult = true;
+
         if (testType === 2) {
             checkedResult = checkInputModel();
             model = generateInputModel();
@@ -94,7 +93,7 @@
         return model;
     }
 
-    function checkRadioModel() {
+    function checkRadioAndImageModel() {
         var radioGroups = $("[radiogroup]");
         var res = true;
 

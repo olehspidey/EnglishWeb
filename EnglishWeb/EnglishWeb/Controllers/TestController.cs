@@ -20,13 +20,18 @@ namespace EnglishWeb.Controllers
     {
         private readonly UserManager<User> _userManager;
         private readonly IRepository<Test> _testsRepository;
+        private readonly IRepository<TestAnswer> _answersRepository;
         private readonly IMapper _mapper;
 
-        public TestController(UserManager<User> userManager, IMapper mapper, IRepository<Test> testsRepository)
+        public TestController(UserManager<User> userManager,
+            IMapper mapper,
+            IRepository<Test> testsRepository,
+            IRepository<TestAnswer> answersRepository)
         {
             _userManager = userManager;
             _mapper = mapper;
             _testsRepository = testsRepository;
+            _answersRepository = answersRepository;
         }
 
         [HttpGet("{id}")]
@@ -50,6 +55,17 @@ namespace EnglishWeb.Controllers
             }
 
             return View(_mapper.Map<Test, TestViewModel>(test));
+        }
+
+        [HttpGet("Image/{answerId}")]
+        public async Task<IActionResult> Image(Guid answerId)
+        {
+            var answer = await _answersRepository.GetByIdAsync(answerId);
+
+            if (answer == null)
+                return BadRequest("Image was not found");
+
+            return File(answer.Image, "image/jpeg");
         }
 
         [HttpGet("My")]
@@ -125,10 +141,20 @@ namespace EnglishWeb.Controllers
         [Authorize(Roles = UserRoles.Teacher)]
         public async Task<IActionResult> Create([FromForm] CreateTestViewModel model)
         {
-            model.Questions = JsonConvert.DeserializeObject<List<QuestionViewModel>>(model.QStringified);
+            try
+            {
+                model.Questions = JsonConvert.DeserializeObject<List<QuestionViewModel>>(model.QStringified);
+            }
+            catch (Exception)
+            {
+                return BadRequest("Invalid model. Invalid questions");
+            }
 
             if (model.Type == TestType.Image)
             {
+                if (model.Images == null)
+                    return BadRequest("Invalid model. Please add all images");
+
                 var index = 0;
 
                 model.Questions.ForEach(question =>
@@ -146,18 +172,12 @@ namespace EnglishWeb.Controllers
             }
 
             if (!ModelState.IsValid)
-            {
-                Response.StatusCode = (int)HttpStatusCode.BadRequest;
-                return Json("Invalid model");
-            }
+                return BadRequest("Invalid model");
 
             var user = await _userManager.FindByNameAsync(User.Identity.Name);
 
             if (user == null)
-            {
-                Response.StatusCode = (int)HttpStatusCode.BadRequest;
-                return Json("User was not found");
-            }
+                return BadRequest("User was not found");
 
             var test = _mapper.Map<CreateTestViewModel, Test>(model);
 
@@ -188,7 +208,7 @@ namespace EnglishWeb.Controllers
 
             var result = (0, 0, 0);
 
-            if (model.Type == TestType.Radio)
+            if (model.Type == TestType.Radio || model.Type == TestType.Image)
                 result = GetPassRadioResult(test.Questions, model.AnswersId);
             if (model.Type == TestType.Input)
                 result = GetPassInputResult(test.Questions, model.Answers);

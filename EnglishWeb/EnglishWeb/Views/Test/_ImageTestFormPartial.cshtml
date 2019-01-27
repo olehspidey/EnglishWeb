@@ -1,0 +1,49 @@
+﻿@model EnglishWeb.Core.Models.ViewModels.TestViewModel
+
+@{
+    var testType = (int)Model.Type;
+}
+
+<style>
+    img {
+        width: 10rem;
+        height: 8rem;
+    }
+
+    input[type=radio] {
+        box-sizing: border-box;
+        padding: 0;
+        width: 100%;
+        height: 1.5rem;
+    }
+    
+    input[type=radio]:focus {
+        box-shadow: none;
+    }
+</style>
+
+<div class="d-flex align-items-center flex-column" test-id="@Model.Id">
+    @foreach (var question in Model.Questions)
+    {
+        <div class="d-flex align-items-baseline mt-5">
+            <h5 class="mr-2">Вопрос:</h5>
+            <h6>@question.Name</h6>
+        </div>
+        <div class="d-flex align-items-center justify-content-center" radiogroup="@question.Name">
+            @foreach (var answer in question.Answers)
+            {
+                <div class="d-flex flex-column align-items-baseline card m-1">
+                    <img src="@Url.Action("Image", "Test", new{answerId = answer.Id})" alt="not found" />
+                    <input type="radio" name="@answer.Id"/>
+                </div>
+            }
+        </div>
+    }
+    <button id="submitBut" class="btn btn-primary mt-3">Сдать</button>
+</div>
+
+<script type="text/javascript">
+    document.addEventListener("DOMContentLoaded", function() {
+        init(Number(@testType));
+    });
+</script>
