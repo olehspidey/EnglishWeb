@@ -1,0 +1,31 @@
+﻿@using EnglishWeb.Core.Models.DomainModels
+@model EnglishWeb.Core.Models.ViewModels.TestViewModel
+
+@{
+    ViewData["Title"] = "Test";
+}
+
+@section Scripts
+    {
+    <script type="text/javascript" src="~/js/Test/passRadioTest.js"></script>
+}
+
+<h1>Тест @Model.Name</h1>
+
+<div id="successMessage" class="alert alert-primary" style="display:none" role="alert">
+    Success
+</div>
+
+<div id="errorMessage" class="alert alert-danger" style="display: none" role="alert">
+    Error
+</div>
+@{
+    await Html.RenderPartialAsync($"_{Model.Type}TestFormPartial");
+}
+
+<div id="result" class="mt-3" style="display: none">
+    <h4>Ваш результат:</h4>
+    <h6 id="trueCount">as</h6>
+    <h6 id="falseCount">as</h6>
+    <small id="qestionsCount"></small>
+</div>

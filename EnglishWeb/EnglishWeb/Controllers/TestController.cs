@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -6,6 +7,7 @@ using AutoMapper;
 using EnglishWeb.Core.Models;
 using EnglishWeb.Core.Models.DomainModels;
 using EnglishWeb.Core.Models.ViewModels;
+using EnglishWeb.DAL;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -17,12 +19,37 @@ namespace EnglishWeb.Controllers
     public class TestController : Controller
     {
         private readonly UserManager<User> _userManager;
+        private readonly IRepository<Test> _testsRepository;
         private readonly IMapper _mapper;
 
-        public TestController(UserManager<User> userManager, IMapper mapper)
+        public TestController(UserManager<User> userManager, IMapper mapper, IRepository<Test> testsRepository)
         {
             _userManager = userManager;
             _mapper = mapper;
+            _testsRepository = testsRepository;
+        }
+
+        [HttpGet("{id}")]
+        [Authorize(Roles = UserRoles.UserTeacherAdmin)]
+        public async Task<IActionResult> Index(Guid? id)
+        {
+            if (id == null)
+            {
+                ModelState.AddModelError("ModelError", "Invalid id");
+
+                return View();
+            }
+
+            var test = await _testsRepository.GetByIdAsync(id);
+
+            if (test == null)
+            {
+                ModelState.AddModelError("ModelError", "Test was not found");
+
+                return View();
+            }
+
+            return View(_mapper.Map<Test, TestViewModel>(test));
         }
 
         [HttpGet("My")]
@@ -51,6 +78,7 @@ namespace EnglishWeb.Controllers
         }
 
         [HttpGet("ChooseType")]
+        [Authorize(Roles = UserRoles.Teacher)]
         public IActionResult ChooseType(TestType testType)
         {
             switch (testType)
@@ -67,6 +95,7 @@ namespace EnglishWeb.Controllers
         }
 
         [HttpGet("CreateRadioAndInput")]
+        [Authorize(Roles = UserRoles.Teacher)]
         public IActionResult CreateRadioAndInput()
         {
             ViewBag.TestType = TestType.Radio;
@@ -75,6 +104,7 @@ namespace EnglishWeb.Controllers
         }
 
         [HttpGet("CreateImage")]
+        [Authorize(Roles = UserRoles.Teacher)]
         public IActionResult CreateImage()
         {
             ViewBag.TestType = TestType.Image;
@@ -83,6 +113,7 @@ namespace EnglishWeb.Controllers
         }
 
         [HttpGet("CreateInput")]
+        [Authorize(Roles = UserRoles.Teacher)]
         public IActionResult CreateInput()
         {
             ViewBag.TestType = TestType.Input;
@@ -141,6 +172,44 @@ namespace EnglishWeb.Controllers
 
             Response.StatusCode = (int)HttpStatusCode.BadRequest;
             return Json("Can't save");
+        }
+
+        [HttpPost("Pass")]
+        [Authorize(Roles = UserRoles.UserTeacherAdmin)]
+        public async Task<IActionResult> Pass(PassTestViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return View();
+
+            var test = await _testsRepository.GetByIdAsync(model.Id);
+
+            if (test == null)
+            {
+                ModelState.AddModelError("TestError", "Test was not found");
+
+                return View();
+            }
+
+            var falseCount = 0;
+            var trueCount = 0;
+
+            test.Questions.ForEach(question =>
+            {
+                var trueAnswers = question.Answers.Where(answer => answer.IsTrue);
+                var userAnswer = trueAnswers.FirstOrDefault(answer => model.AnswersId.Contains(answer.Id));
+
+                if (userAnswer == null)
+                    falseCount++;
+                else
+                    trueCount++;
+            });
+
+            return Json(new PassedTestResultViewModel
+            {
+                FalseCount = falseCount,
+                TrueCount = trueCount,
+                QuestionsCount = test.Questions.Count
+            });
         }
     }
 }

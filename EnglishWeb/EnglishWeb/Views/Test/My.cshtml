@@ -27,7 +27,7 @@ else
     <div class="list-group test-list">
         @foreach (var test in Model)
         {
-            <a href="#" class="list-group-item list-group-item-action">@test.Name</a>
+            <a asp-controller="Test" asp-action="Index" asp-route-id="@test.Id" class="list-group-item list-group-item-action">@test.Name</a>
         }
     </div>
     <div class="justify-content-center d-flex">

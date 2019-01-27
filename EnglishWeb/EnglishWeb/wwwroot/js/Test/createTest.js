@@ -102,9 +102,9 @@
                 name: template.find(".q-name").val(),
                 answers
             });
-
-            form.append("qStringified", JSON.stringify(model.questions));
         }
+        form.append("qStringified", JSON.stringify(model.questions));
+
         return form;
     }
 

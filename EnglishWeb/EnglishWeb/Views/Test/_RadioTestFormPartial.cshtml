@@ -1,0 +1,20 @@
+﻿@using EnglishWeb.Core.Models.DomainModels
+@model EnglishWeb.Core.Models.ViewModels.TestViewModel
+
+<div class="d-flex align-items-center flex-column" test-id="@Model.Id">
+    @foreach (var question in Model.Questions)
+    {
+        <div class="d-flex align-items-baseline mt-5">
+            <h5 class="mr-2">Вопрос:</h5>
+            <h6>@question.Name</h6>
+        </div>
+        <div class="d-flex align-items-center" radiogroup="@question.Name">
+            @foreach (var answer in question.Answers)
+            {
+                <div class="mr-2">@answer.Text</div>
+                <input class="mr-5" type="radio" name="@answer.Id" />
+            }
+        </div>
+    }
+    <button id="submitBut" class="btn btn-primary mt-3">Сдать</button>
+</div>
