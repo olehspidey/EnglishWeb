@@ -1,0 +1,31 @@
+﻿@using EnglishWeb.Core.Models
+@model List<EnglishWeb.Core.Models.ViewModels.TestViewModel>
+@{
+    ViewData["Title"] = "Упражнения";
+}
+
+<style>
+    .test-list {
+        padding: 2rem 15rem;
+    }
+
+    .test-list .list-group-item:hover {
+        background: #007bff;
+        color: white !important;
+    }
+</style>
+
+<h1>Выберете упражнения</h1>
+@if (!Model.Any())
+{
+    <h3 class="text-center">У вас еще нету тестов</h3>
+}
+else
+{
+    <div class="list-group test-list">
+        @foreach (var test in Model)
+        {
+            <a asp-controller="Test" asp-action="Index" asp-route-id="@test.Id" class="list-group-item list-group-item-action">@test.Name</a>
+        }
+    </div>
+}

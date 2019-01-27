@@ -34,10 +34,17 @@
 
 <h1>Статьи</h1>
 
-<div class="list-group articles-list">
-    @foreach (var article in Model)
-    {
-        <a class="list-group-item" asp-action="Index" asp-controller="Article" asp-route-id="@article.Id">@article.Name</a>
-    }
-</div>
+@if (!Model.Any())
+{
+    <h4 class="text-center">Еще нету статей</h4>
+}
+else
+{
+    <div class="list-group articles-list">
+        @foreach (var article in Model)
+        {
+            <a class="list-group-item" asp-action="Index" asp-controller="Article" asp-route-id="@article.Id">@article.Name</a>
+        }
+    </div>
+}
 

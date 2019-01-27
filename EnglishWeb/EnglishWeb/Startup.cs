@@ -65,7 +65,6 @@ namespace EnglishWeb
                 .AddDefaultTokenProviders();
 
             services.AddAutoMapper(expression => expression.AddProfile(new MapperProfile()));
-            services.Configure<FormOptions>(x => x.ValueCountLimit = int.MaxValue);
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 

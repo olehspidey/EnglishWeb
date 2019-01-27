@@ -11,6 +11,7 @@ using EnglishWeb.DAL;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
 namespace EnglishWeb.Controllers
@@ -57,7 +58,29 @@ namespace EnglishWeb.Controllers
                 return View();
             }
 
-            return View(_mapper.Map<Test, TestViewModel>(test));
+            var user = await _userManager.FindByNameAsync(User.Identity.Name);
+
+            if (user == null)
+            {
+                return RedirectToAction(nameof(HomeController.Error), "Home");
+            }
+
+            var mappedTest = _mapper.Map<Test, TestViewModel>(test);
+
+            mappedTest.IsComplated = user.PassedTests.Any(t => t.TestId == mappedTest.Id);
+
+            return View(mappedTest);
+        }
+
+        [HttpGet("List")]
+        [Authorize]
+        public async Task<IActionResult> List()
+        {
+            var tests = await _testsRepository.Table
+                .Take(20)
+                .ToListAsync();
+
+            return View(_mapper.Map<List<Test>, List<TestViewModel>>(tests));
         }
 
         [HttpGet("Image/{answerId}")]
@@ -72,7 +95,7 @@ namespace EnglishWeb.Controllers
         }
 
         [HttpGet("My")]
-        [Authorize(Roles = UserRoles.Teacher)]
+        [Authorize]
         public async Task<IActionResult> My()
         {
             var user = await _userManager.FindByNameAsync(User.Identity.Name);

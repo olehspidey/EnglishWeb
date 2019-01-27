@@ -40,7 +40,7 @@ namespace EnglishWeb.Controllers
         }
 
         [HttpGet("{id}")]
-        [Authorize(Roles = UserRoles.UserTeacherAdmin)]
+        [Authorize]
         public async Task<IActionResult> Index(Guid? id)
         {
             if (id == null)
@@ -53,11 +53,7 @@ namespace EnglishWeb.Controllers
             var article = await _articleRepository.GetByIdAsync(id);
 
             if (article == null)
-            {
-                ModelState.AddModelError("ArticleError", "Article was not found");
-
-                return View();
-            }
+                return RedirectToAction(nameof(HomeController.Error), "Home");
 
             return View(_mapper.Map<Article, ArticleViewModel>(article));
         }
@@ -69,11 +65,7 @@ namespace EnglishWeb.Controllers
             var user = await _userManager.FindByNameAsync(User.Identity.Name);
 
             if (user == null)
-            {
-                ModelState.AddModelError("UserError", "User was not found");
-
-                return View();
-            }
+                return RedirectToAction(nameof(HomeController.Error), "Home");
 
             return View(_mapper.Map<List<Article>, List<ArticleViewModel>>(user.Articles));
         }
@@ -102,11 +94,7 @@ namespace EnglishWeb.Controllers
             var user = await _userManager.FindByNameAsync(User.Identity.Name);
 
             if (user == null)
-            {
-                ModelState.AddModelError("UserError", "User was not found");
-
-                return View();
-            }
+                return RedirectToAction(nameof(HomeController.Error), "Home");
 
             var article = _mapper.Map<CreateArticleViewModel, Article>(model);
 
@@ -116,9 +104,9 @@ namespace EnglishWeb.Controllers
             var insertRes = await _articleRepository.InsertAsync(article);
 
             if (insertRes >= 0)
-                return RedirectToAction(nameof(ArticleController.Create), "Article", new {success = true});
+                return RedirectToAction(nameof(Create), "Article", new {success = true});
 
-            return RedirectToAction(nameof(ArticleController.Create), "Article", new { success = false });
+            return RedirectToAction(nameof(Create), "Article", new { success = false });
         }
     }
 }

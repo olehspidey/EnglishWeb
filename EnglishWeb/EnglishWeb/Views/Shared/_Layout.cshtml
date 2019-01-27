@@ -29,22 +29,24 @@
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-block justify-content-between">
                     <ul class="navbar-nav">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Упражнения
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <a class="dropdown-item" asp-controller="Test" asp-action="My">Мои упражнения</a>
+                                @if (User.IsInRole(UserRoles.Teacher))
+                                {
+                                    <a class="dropdown-item" asp-controller="Test" asp-action="Create">Создать упражнения</a>
+                                }
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" asp-controller="Test" asp-action="List">Сдать упражнения</a>
+                            </div>
                         </li>
                         @if (User.IsInRole(UserRoles.Teacher))
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Test" asp-action="My">Упражнения</a>
-                            </li>
-                            <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Article" asp-action="My">Грамматика</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Фильмы</a>
                             </li>
                         }
                         @if (User.IsInRole(UserRoles.User))
@@ -53,6 +55,9 @@
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Article" asp-action="List">Грамматика</a>
                             </li>
                         }
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Фильмы</a>
+                        </li>
                     </ul>
                     <ul class="navbar-nav">
                         @if (@User.Identity.IsAuthenticated)

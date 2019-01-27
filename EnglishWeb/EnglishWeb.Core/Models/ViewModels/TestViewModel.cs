@@ -13,5 +13,7 @@ namespace EnglishWeb.Core.Models.ViewModels
         public List<QuestionViewModel> Questions { get; set; }
 
         public TestType Type { get; set; }
+
+        public bool IsComplated { get; set; }
     }
 }

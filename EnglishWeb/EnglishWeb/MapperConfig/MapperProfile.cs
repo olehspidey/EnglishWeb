@@ -18,6 +18,8 @@ namespace EnglishWeb.MapperConfig
                 .ForAllOtherMembers(expression => expression.AllowNull());
             CreateMap<CreateTestViewModel, Test>()
                 .ForAllOtherMembers(expression => expression.AllowNull());
+            CreateMap<Test, TestViewModel>()
+                .ForAllMembers(expression => expression.AllowNull());
         }
     }
 }

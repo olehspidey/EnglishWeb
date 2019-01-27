@@ -47,6 +47,7 @@
                 errorMessage.hide();
                 succesMessage.html("Тест успешно сдан");
                 succesMessage.show();
+                $("[test-id]").remove();
 
                 $("#trueCount").html(`Правильных ответов ${e.trueCount}`);
                 $("#falseCount").html(`Неправильных ответов ${e.falseCount}`);
