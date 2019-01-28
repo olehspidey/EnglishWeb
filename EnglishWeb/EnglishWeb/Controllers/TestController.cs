@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
 using AutoMapper;
 using EnglishWeb.Core.Models;
@@ -283,6 +282,7 @@ namespace EnglishWeb.Controllers
             });
         }
 
+        [NonAction]
         private static (int, int, int) GetPassRadioResult(List<Question> questions, List<Guid> answersId)
         {
             var falseCount = 0;
@@ -302,6 +302,7 @@ namespace EnglishWeb.Controllers
             return (falseCount, trueCount, questions.Count);
         }
 
+        [NonAction]
         private static (int, int, int) GetPassInputResult(List<Question> questions, List<string> answers)
         {
             var falseCount = 0;

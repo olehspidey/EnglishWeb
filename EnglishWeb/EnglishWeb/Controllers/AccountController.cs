@@ -12,7 +12,6 @@ namespace EnglishWeb.Controllers
     public class AccountController : Controller
     {
         private readonly UserManager<User> _userManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IMapper _mapper;
         private readonly SignInManager<User> _signInManager;
 
@@ -22,7 +21,6 @@ namespace EnglishWeb.Controllers
             SignInManager<User> signInManager)
         {
             _userManager = userManager;
-            _roleManager = roleManager;
             _mapper = mapper;
             _signInManager = signInManager;
         }

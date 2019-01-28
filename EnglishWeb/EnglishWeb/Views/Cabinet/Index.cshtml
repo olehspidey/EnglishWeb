@@ -1,0 +1,29 @@
+﻿@using EnglishWeb.Controllers
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+@{
+    var activeTab = Url.ActionContext.RouteData.Values["tab"].ToString();
+    var activeFirst = activeTab == "1" ? "active" : "";
+    var activeSecond = activeTab == "2" ? "active" : "";
+    var activeThird = activeTab == "3" ? "active" : "";
+}
+
+<ul class="nav nav-tabs">
+    <li class="nav-item">
+        <a class="nav-link @activeFirst" href="@Url.Action(nameof(CabinetController.Index), "Cabinet", new {tab = 1})" tabindex="@activeTab">Смена пароля</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link @activeSecond" href="@Url.Action(nameof(CabinetController.Index), "Cabinet", new {tab = 2})" tabindex="@activeTab">-</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link @activeThird" href="@Url.Action(nameof(CabinetController.Index), "Cabinet", new {tab = 3})" tabindex="@activeTab">-</a>
+    </li>
+</ul>
+
+@if (activeTab == "1")
+{
+    await Html.RenderPartialAsync("_ChangePasswordPartial");
+}

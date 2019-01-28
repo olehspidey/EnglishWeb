@@ -1,26 +1,25 @@
 ﻿using AutoMapper;
-using EnglishWeb.Core.Models.DomainModels;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using EnglishWeb.Data;
-using EnglishWeb.DAL;
+using EnglishWeb.Extensions;
 using EnglishWeb.MapperConfig;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using IdentityRole = EnglishWeb.Core.Models.DomainModels.IdentityRole;
 
 namespace EnglishWeb
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration, IHostingEnvironment hostingEnvironment)
+        public Startup(IHostingEnvironment hostingEnvironment)
         {
-            Configuration = configuration;
+            Configuration = Configuration = new ConfigurationBuilder()
+                .SetBasePath($"{hostingEnvironment.WebRootPath}")
+                .AddJsonFile("appsettings.json")
+                .AddJsonFile("emailsettings.json")
+                .Build();
             Environment = hostingEnvironment;
         }
 
@@ -36,32 +35,17 @@ namespace EnglishWeb
                 options.CheckConsentNeeded = context => true;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
+            services.AddDatabaseContext(Environment, Configuration);
+            services.AddOwnServices();
 
-            services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(
-                    Configuration.GetConnectionString(Environment.IsDevelopment() ? "DefaultConnection" : "ProductionConnection")));
-            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(options =>
                 {
                     options.LoginPath = new PathString("/Account/Login");
-                    options.LogoutPath = new PathString("Account/LogOut");
+                    options.LogoutPath = new PathString("/Account/LogOut");
                 });
 
-            services.AddIdentity<User, IdentityRole>(options =>
-            {
-                options.Password.RequireDigit = true;
-                options.Password.RequiredLength = 6;
-                options.Password.RequiredUniqueChars = 0;
-                options.Password.RequireNonAlphanumeric = false;
-
-                options.User.RequireUniqueEmail = true;
-            })
-                .AddEntityFrameworkStores<ApplicationDbContext>()
-                .AddUserManager<UserManager<User>>()
-                .AddSignInManager<SignInManager<User>>()
-                .AddRoleManager<RoleManager<IdentityRole>>()
-                .AddDefaultTokenProviders();
+            services.AddIdentityConfig();
 
             services.AddAutoMapper(expression => expression.AddProfile(new MapperProfile()));
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
