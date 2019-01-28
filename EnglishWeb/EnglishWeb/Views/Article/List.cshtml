@@ -1,4 +1,5 @@
-﻿@model List<EnglishWeb.Core.Models.ViewModels.ArticleViewModel>
+﻿@using EnglishWeb.Core.Models.DomainModels
+@model List<EnglishWeb.Core.Models.ViewModels.ArticleViewModel>
 @{
     ViewData["Title"] = "List";
 }
@@ -8,27 +9,31 @@
         padding: 0 15rem;
     }
 
-    .articles-list .list-group-item {
-        cursor: pointer;
-    }
+        .articles-list .list-group-item {
+            cursor: pointer;
+        }
 
-    .articles-list .list-group-item a {
-        display: block;
-        text-decoration: none;
-    }
+            .articles-list .list-group-item a {
+                display: block;
+                text-decoration: none;
+            }
 
-    .articles-list .list-group-item:hover {
-        background: #007bff;
-    }
+            .articles-list .list-group-item:hover {
+                background: #007bff;
+            }
 
-    .articles-list .list-group-item:hover {
-        color: white !important;
-    }
+            .articles-list .list-group-item:hover {
+                color: white !important;
+            }
 
     .create-box {
         width: 100%;
         height: 100%;
         padding: 2rem 15rem 0 15rem;
+    }
+
+    form select {
+        cursor: pointer;
     }
 </style>
 
@@ -38,7 +43,27 @@
 {
     <h4 class="text-center">Еще нету статей</h4>
 }
-else
+<form class="mb-5 articles-list" asp-controller="Article" asp-action="List" method="get">
+    <div class="d-flex align-items-center">
+        <input class="form-control mr-2" type="text" name="query" placeholder="Введите название статьи или имя автора" value="@Url.ActionContext.RouteData.Values["query"]" />
+        <button class="btn btn-primary" type="submit">Поиск</button>
+    </div>
+    <div class="d-flex mt-2">
+        <select class="form-control mr-1" name="language">
+            @foreach (var lang in Html.GetEnumSelectList<Language>())
+            {
+                <option selected="selected" value="@lang.Value">@lang.Text</option>
+            }
+        </select>
+        <select class="form-control ml-1" name="type">
+            @foreach (var type in Html.GetEnumSelectList<ArticleType>())
+            {
+                <option value="@type.Value">@type.Text</option>
+            }
+        </select>
+    </div>
+</form>
+@if (Model.Any())
 {
     <div class="list-group articles-list">
         @foreach (var article in Model)

@@ -1,4 +1,4 @@
-﻿function init(testType) {
+﻿function init(testType, language) {
     $(document).ready(() => {
         bind();
     });
@@ -86,6 +86,7 @@
         var form = new FormData();
         form.append("name", model.name);
         form.append("type", model.type);
+        form.append("language", language);
 
         for (var i = 1; i < questionsNumber + 1; i++) {
             var template = $("#qTemplate" + i);

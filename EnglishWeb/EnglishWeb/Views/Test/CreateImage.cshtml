@@ -1,9 +1,11 @@
-﻿@{
+﻿@using Microsoft.AspNetCore.Routing
+@{
     ViewData["Title"] = "CreateImage";
 }
 
 @{
     var testType = (int)ViewBag.TestType;
+    var language = (int)ViewBag.Language;
 }
 
 @section Scripts
@@ -57,6 +59,6 @@
 
 <script type="text/javascript">
     document.addEventListener("DOMContentLoaded", function() {
-        init(Number(@testType), true);
+        init(Number(@testType), Number(@language));
     });
 </script>

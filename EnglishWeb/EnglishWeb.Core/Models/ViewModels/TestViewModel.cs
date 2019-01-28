@@ -14,6 +14,8 @@ namespace EnglishWeb.Core.Models.ViewModels
 
         public TestType Type { get; set; }
 
+        public Language Language { get; set; }
+
         public bool IsComplated { get; set; }
     }
 }

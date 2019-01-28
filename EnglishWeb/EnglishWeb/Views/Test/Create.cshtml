@@ -1,4 +1,5 @@
-﻿@using EnglishWeb.Core.Models.DomainModels
+﻿@using EnglishWeb.Controllers
+@using EnglishWeb.Core.Models.DomainModels
 
 @{
     ViewData["Title"] = "Create";
@@ -11,14 +12,20 @@
 
 <h1>Создать тест</h1>
 <div class="choose-type-box">
-    <form  method="get" action="/Test/ChooseType">
+    <form  method="get" action="@Url.Action(nameof(TestController.ChooseType), "Test")">
         <select class="form-control" name="testType">
-            <option value="0">Radio</option>
-            <option value="1">Image</option>
-            <option value="2">Input</option>
+            @foreach (var tType in Html.GetEnumSelectList<TestType>())
+            {
+                <option value="@tType.Value">@tType.Text</option>
+            }
         </select>
-
-        <div class="d-flex justify-content-center mt-2">
+        <select class="form-control mt-5" name="language">
+            @foreach (var language in Html.GetEnumSelectList<Language>())
+            {
+                <option value="@language.Value">@language.Text</option>
+            }
+        </select>
+        <div class="d-flex justify-content-center mt-5">
             <input class="btn btn-primary" type="submit" role="button" value="Начать" />
         </div>
     </form>

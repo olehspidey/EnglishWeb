@@ -14,6 +14,8 @@ namespace EnglishWeb.Core.Models.DomainModels
 
         public TestType Type { get; set; }
 
+        public Language Language { get; set; }
+
         public virtual User User { get; set; }
 
         public Guid UserId { get; set; }

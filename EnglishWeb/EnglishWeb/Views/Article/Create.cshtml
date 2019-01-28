@@ -1,44 +1,54 @@
-﻿@model EnglishWeb.Core.Models.ViewModels.CreateArticleViewModel
+﻿@using EnglishWeb.Core.Models.DomainModels
+@model EnglishWeb.Core.Models.ViewModels.CreateArticleViewModel
 @{
     ViewData["Title"] = "Create";
 }
 
 <h1>Создать статью</h1>
-<br/>
+<br />
 
 <style>
     .create-article-form {
         padding: 0 15rem;
     }
 
-    .create-article-form input, textarea {
-        margin-bottom: 2rem;
-    }
+        .create-article-form input, textarea, select {
+            margin-bottom: 2rem;
+        }
 
-    .create-article-form textarea {
-        max-height: 15rem;
-    }
+        .create-article-form textarea {
+            max-height: 15rem;
+        }
 </style>
 
-@using (Html.BeginForm(FormMethod.Post, true, new { @class = "create-article-form" }))
-{
-    if(ViewBag.Success == true)
-     {
-         <div class="alert alert-primary" role="alert">
-             Статья успешно добавлена
-         </div>
-    }
-    if(ViewBag.Success == false)
+<form class="create-article-form" asp-controller="Article" asp-action="Create" method="post">
+    @if(ViewBag.Success == true)
     {
-        <div class="alert alert-danger" role="alert">
-            Ошибка. Невозможно добавить статью
-        </div>
+    <div class="alert alert-primary" role="alert">
+        Статья успешно добавлена
+    </div>
+    }
+    @if(ViewBag.Success == false)
+    {
+    <div class="alert alert-danger" role="alert">
+        Ошибка. Невозможно добавить статью
+    </div>
     }
 
-    @Html.ValidationSummary()
+    @Html.ValidationSummary(true)
     @Html.ValidationMessageFor(model => model.Name)
     <input class="form-control" name="name" placeholder="Введите название статьи" />
     @Html.ValidationMessageFor(model => model.Text)
-    <textarea class="form-control" name="text" placeholder="Текст статьи" ></textarea>
+    <textarea class="form-control" name="text" placeholder="Текст статьи"></textarea>
+    <select class="form-control" name="type">
+        <option value="@ArticleType.Orthography">Орфография</option>
+        <option value="@ArticleType.PartsOfSpeech">Части речи</option>
+    </select>
+    <select class="form-control" name="language">
+        @foreach (var lang in Html.GetEnumSelectList<Language>())
+        {
+            <option value="@lang.Value">@lang.Text</option>
+        }
+    </select>
     <input class="btn btn-primary" type="submit" value="Сохранить" />
-}
+</form>

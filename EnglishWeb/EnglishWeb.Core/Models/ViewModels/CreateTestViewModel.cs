@@ -17,6 +17,8 @@ namespace EnglishWeb.Core.Models.ViewModels
 
         public List<IFormFile> Images { get; set; }
 
+        public Language Language { get; set; }
+
         public string QStringified { get; set; }
     }
 }

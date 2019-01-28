@@ -12,5 +12,7 @@ namespace EnglishWeb.Core.Models.ViewModels
         public string Text { get; set; }
 
         public ArticleType Type { get; set; }
+
+        public Language Language { get; set; }
     }
 }

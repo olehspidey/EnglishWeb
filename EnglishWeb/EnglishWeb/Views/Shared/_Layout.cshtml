@@ -56,7 +56,12 @@
                         @if (User.IsInRole(UserRoles.User))
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Article" asp-action="List">Грамматика</a>
+                                <a class="nav-link text-dark"
+                                   asp-controller="Article"
+                                   asp-action="List"
+                                   asp-route-language="0"
+                                   asp-route-type="0"
+                                   asp-route-query=" ">Грамматика</a>
                             </li>
                         }
                         <li class="nav-item">

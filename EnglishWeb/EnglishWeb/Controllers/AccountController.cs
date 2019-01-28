@@ -79,7 +79,11 @@ namespace EnglishWeb.Controllers
             var user = await _userManager.FindByEmailAsync(model.Email);
 
             if (user == null)
-                return RedirectToAction(nameof(HomeController.NotFound), "Home");
+            {
+                ModelState.AddModelError("InvalidCred", "Incorrect email or password");
+
+                return View();
+            }
 
             if (!user.IsActive)
             {

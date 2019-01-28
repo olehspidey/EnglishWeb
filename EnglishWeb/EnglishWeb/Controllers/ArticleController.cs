@@ -28,15 +28,34 @@ namespace EnglishWeb.Controllers
             _userManager = userManager;
         }
 
-        [HttpGet("List")]
-        public async Task<IActionResult> List()
-        {
-            var articles = await _articleRepository
-                .Table
-                .Take(20)
-                .ToListAsync();
+        //[HttpGet("List")]
+        //public async Task<IActionResult> List()
+        //{
+        //    var articles = await _articleRepository
+        //        .Table
+        //        .Take(20)
+        //        .ToListAsync();
 
-            return View(_mapper.Map<List<Article>, List<ArticleViewModel>>(articles));
+        //    return View(_mapper.Map<List<Article>, List<ArticleViewModel>>(articles));
+        //}
+
+        // todo issue
+        [HttpGet("List")]
+        public async Task<IActionResult> List(Language language, ArticleType type, string query)
+        {
+            var articles = _articleRepository
+                .Table
+                .Where(a => a.Language == language && a.Type == type);
+
+            if (!string.IsNullOrWhiteSpace(query))
+                articles = articles
+                    .Where(a => a.User.Name.Contains(query) || a.User.LastName.Contains(query));
+
+            RouteData.Values["language"] = language;
+            RouteData.Values["type"] = type;
+            RouteData.Values["query"] = query;
+
+            return View(_mapper.Map<List<Article>, List<ArticleViewModel>>(await articles.ToListAsync()));
         }
 
         [HttpGet("{id}")]
@@ -71,12 +90,9 @@ namespace EnglishWeb.Controllers
         }
 
         [Authorize(Roles = UserRoles.Teacher)]
-        [HttpGet("Create/{success?}")]
-        public IActionResult Create(bool? success)
+        [HttpGet("Create")]
+        public IActionResult Create()
         {
-            if (success == true)
-                ViewBag.Success = true;
-
             return View();
         }
 
@@ -104,9 +120,13 @@ namespace EnglishWeb.Controllers
             var insertRes = await _articleRepository.InsertAsync(article);
 
             if (insertRes >= 0)
-                return RedirectToAction(nameof(Create), "Article", new {success = true});
+            {
+                ViewBag.Success = true;
+                return RedirectToAction(nameof(Create), "Article");
+            }
 
-            return RedirectToAction(nameof(Create), "Article", new { success = false });
+            ViewBag.Success = true;
+            return RedirectToAction(nameof(Create), "Article");
         }
     }
 }

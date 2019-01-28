@@ -140,16 +140,16 @@ namespace EnglishWeb.Controllers
 
         [HttpGet("ChooseType")]
         [Authorize(Roles = UserRoles.Teacher)]
-        public IActionResult ChooseType(TestType testType)
+        public IActionResult ChooseType(TestType testType, Language language)
         {
             switch (testType)
             {
                 case TestType.Image:
-                    return RedirectToAction(nameof(CreateImage), "Test");
+                    return RedirectToAction(nameof(CreateImage), "Test", new { language });
                 case TestType.Input:
-                    return RedirectToAction(nameof(CreateInput), "Test");
+                    return RedirectToAction(nameof(CreateInput), "Test", new { language });
                 case TestType.Radio:
-                    return RedirectToAction(nameof(CreateRadioAndInput), "Test");
+                    return RedirectToAction(nameof(CreateRadioAndInput), "Test", new { language });
             }
 
             return RedirectToAction(nameof(HomeController.NotFound), "Home");
@@ -157,27 +157,30 @@ namespace EnglishWeb.Controllers
 
         [HttpGet("CreateRadioAndInput")]
         [Authorize(Roles = UserRoles.Teacher)]
-        public IActionResult CreateRadioAndInput()
+        public IActionResult CreateRadioAndInput(Language language)
         {
             ViewBag.TestType = TestType.Radio;
+            ViewBag.Language = language;
 
             return View();
         }
 
         [HttpGet("CreateImage")]
         [Authorize(Roles = UserRoles.Teacher)]
-        public IActionResult CreateImage()
+        public IActionResult CreateImage(Language language)
         {
             ViewBag.TestType = TestType.Image;
+            ViewBag.Language = language;
 
             return View();
         }
 
         [HttpGet("CreateInput")]
         [Authorize(Roles = UserRoles.Teacher)]
-        public IActionResult CreateInput()
+        public IActionResult CreateInput(Language language)
         {
             ViewBag.TestType = TestType.Input;
+            ViewBag.Language = language;
 
             return View("CreateRadioAndInput");
         }

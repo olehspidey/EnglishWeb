@@ -14,6 +14,8 @@ namespace EnglishWeb.Core.Models.DomainModels
 
         public ArticleType Type { get; set; }
 
+        public Language Language { get; set; }
+
         public DateTime CreatedDate { get; set; }
 
         public Guid UserId { get; set; }
