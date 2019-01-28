@@ -23,7 +23,11 @@
     </li>
 </ul>
 
-@if (activeTab == "1")
+@if (activeTab == "1" && ViewBag.IsSentToken != true)
 {
-    await Html.RenderPartialAsync("_ChangePasswordPartial");
+    await Html.RenderPartialAsync("_SentChangePasToken");
+}
+@if (ViewBag.IsSentToken == true)
+{
+    await Html.RenderPartialAsync("_ResetPasswordPartial");
 }

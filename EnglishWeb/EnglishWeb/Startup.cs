@@ -15,7 +15,7 @@ namespace EnglishWeb
     {
         public Startup(IHostingEnvironment hostingEnvironment)
         {
-            Configuration = Configuration = new ConfigurationBuilder()
+            Configuration = new ConfigurationBuilder()
                 .SetBasePath($"{hostingEnvironment.WebRootPath}")
                 .AddJsonFile("appsettings.json")
                 .AddJsonFile("emailsettings.json")
@@ -29,6 +29,7 @@ namespace EnglishWeb
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSingleton(op => Configuration);
             services.Configure<CookiePolicyOptions>(options =>
             {
                 // This lambda determines whether user consent for non-essential cookies is needed for a given request.

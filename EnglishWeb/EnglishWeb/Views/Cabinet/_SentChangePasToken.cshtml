@@ -1,1 +1,8 @@
-﻿<h5>Зайдите в свой почтовый ящик и перейте по ссылке что мы вам отправили чтобы изменить пароль</h5>
+﻿<h5 class="mt-5 text-center">* Чтобы изменить пароль нажмине кнопку отправить.</h5>
+<h5 class="text-center">После чего на вашу почту прийдет код</h5>
+<form class="mt-5 d-flex justify-content-center"
+      asp-action="SendChangePasToken"
+      asp-controller="Cabinet"
+      asp-route-redirect="@Url.Action("Index", "Cabinet", new { tab = Url.ActionContext.RouteData.Values["tab"], isSentRes = true})">
+    <button class="btn btn-primary btn-lg" type="submit">Отправить</button>
+</form>

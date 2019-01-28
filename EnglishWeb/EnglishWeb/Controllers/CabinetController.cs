@@ -2,7 +2,6 @@
 using EnglishWeb.BLL.Services.Abstract;
 using EnglishWeb.Core.Models.DomainModels;
 using EnglishWeb.Core.Models.ViewModels;
-using EnglishWeb.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -22,11 +21,14 @@ namespace EnglishWeb.Controllers
             _emailSendingService = emailSendingService;
         }
 
-        [HttpGet("{tab:int}")]
-        public IActionResult Index(int tab = 1)
+        [HttpGet("{tab:int}/{isSentRes?}")]
+        public IActionResult Index(int tab = 1, bool isSentRes = false)
         {
             if (tab > 3)
                 return RedirectToAction(nameof(HomeController.NotFound), "Home");
+
+            if (isSentRes)
+                ViewBag.IsSentToken = true;
 
             return View();
         }
@@ -34,6 +36,13 @@ namespace EnglishWeb.Controllers
         [HttpPost("ResetPassword")]
         public async Task<IActionResult> ResetPassword(ResetPasViewModel model)
         {
+            if (!ModelState.IsValid)
+            {
+                ModelState.AddModelError("Model", "Invalid model");
+
+                return RedirectToAction("Index", new { tab = 1, isSentRes = true });
+            }
+
             var user = await _userManager.FindByNameAsync(User.Identity.Name);
 
             if(user == null)
@@ -44,14 +53,14 @@ namespace EnglishWeb.Controllers
             if (!resetPasResult.Succeeded)
                 ModelState.AddModelError("UserError", "Can't reset password");
 
-            return PartialView("_ResetPasswordPartial");
+            return RedirectToAction("Index", new {tab = 1, isSentRes = false});
         }
 
         [HttpPost("SendChangePasToken")]
-        public async Task<IActionResult> SendChangePasToken()
+        public async Task<IActionResult> SendChangePasToken(string redirect)
         {
             if (!ModelState.IsValid)
-                return PartialView("_SentChangePasToken");
+                return Redirect(redirect);
 
             var user = await _userManager.FindByNameAsync(User.Identity.Name);
 
@@ -61,10 +70,10 @@ namespace EnglishWeb.Controllers
             var resetPasToken = await _userManager.GeneratePasswordResetTokenAsync(user);
 
             await _emailSendingService.SendAsync(user.Email,
-                "Reset email token",
+                "Reset password token",
                 resetPasToken);
 
-            return PartialView("_ResetPasswordPartial");
+            return Redirect(redirect);
         }
     }
 }
