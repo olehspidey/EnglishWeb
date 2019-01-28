@@ -1,4 +1,5 @@
 ﻿@using EnglishWeb.Core.Models
+@using EnglishWeb.Core.Models.DomainModels
 @model List<EnglishWeb.Core.Models.ViewModels.TestViewModel>
 @{
     ViewData["Title"] = "Упражнения";
@@ -18,9 +19,29 @@
 <h1>Выберете упражнения</h1>
 @if (!Model.Any())
 {
-    <h3 class="text-center">У вас еще нету тестов</h3>
+    <h3 class="text-center">Еще нету тестов</h3>
 }
-else
+<form class="test-list" asp-action="List" asp-controller="Test" method="get">
+    <div class="d-flex">
+        <input class="form-control mr-2" name="query" placeholder="Введите название упражнения"/>
+        <button class="btn btn-primary">Поиск</button>
+    </div>
+    <div class="d-flex mt-2">
+        <select class="form-control mr-1" name="type">
+            @foreach (var tType in Html.GetEnumSelectList<TestType>())
+            {
+                <option value="@tType.Value">@tType.Text</option>
+            }
+        </select>
+        <select class="form-control ml-1" name="language">
+            @foreach (var lang in Html.GetEnumSelectList<Language>())
+            {
+                <option value="@lang.Value">@lang.Text</option>
+            }
+        </select>
+    </div>
+</form>
+@if(Model.Any())
 {
     <div class="list-group test-list">
         @foreach (var test in Model)

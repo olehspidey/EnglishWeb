@@ -84,13 +84,16 @@ namespace EnglishWeb.Controllers
 
         [HttpGet("List")]
         [Authorize]
-        public async Task<IActionResult> List()
+        public async Task<IActionResult> List(Language language, TestType type, string query)
         {
-            var tests = await _testsRepository.Table
-                .Take(20)
-                .ToListAsync();
+            var tests = _testsRepository
+                .Table
+                .Where(t => t.Language == language && t.Type == type);
 
-            return View(_mapper.Map<List<Test>, List<TestViewModel>>(tests));
+            if (!string.IsNullOrWhiteSpace(query))
+                tests = tests.Where(test => test.User.Name.Contains(query) || test.User.LastName.Contains(query));
+
+            return View(_mapper.Map<List<Test>, List<TestViewModel>>(await tests.ToListAsync()));
         }
 
         [HttpGet("Image/{answerId}")]
