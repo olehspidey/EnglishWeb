@@ -1,0 +1,64 @@
+﻿@model List<EnglishWeb.Core.Models.ViewModels.MessageViewModel>
+@{
+    ViewData["Title"] = "Messages";
+}
+
+<style>
+    .chat-box {
+        padding: 2rem 10rem;
+    }
+
+    .chat-body {
+        max-height: 400px;
+        overflow-y: scroll;
+    }
+
+    .card-box {
+        width: 100%;
+    }
+
+    .card {
+        width: fit-content;
+    }
+
+    .cur-mes {
+        background: #f3f3f3;
+    }
+</style>
+
+<div class="chat-box">
+    <div class="chat-body" id="chatBody">
+        @foreach (var message in Model)
+        {
+            var needClass = message.CurrentUserId == message.OwnerId ? "justify-content-end" : "justify-content-start";
+            var needColor = message.CurrentUserId == message.OwnerId ? "cur-mes" : "";
+
+            <div class="card-box d-flex @needClass mt-2">
+                <div class="card @needColor">
+                    <div class="card-body">
+                        @message.Text
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <form class="mt-5" asp-controller="Cabinet" asp-action="SendMessage">
+        <input name="toId" style="display: none" value="@Url.ActionContext.RouteData.Values["sentTo"]" />
+        <input name="chatId" style="display: none" value="@Url.ActionContext.RouteData.Values["chatId"]" />
+        <div class="d-flex align-items-center">
+            <input class="form-control mr-3" name="text"></input>
+            <button class="btn btn-primary" type="submit">Отправить</button>
+        </div>
+    </form>
+</div>
+
+<script type="text/javascript">
+    document.addEventListener("DOMContentLoaded", function() {
+        var chatBody = document.getElementById("chatBody");
+
+        chatBody.scrollTo(0, chatBody.scrollHeight);
+    });
+</script>
+
+

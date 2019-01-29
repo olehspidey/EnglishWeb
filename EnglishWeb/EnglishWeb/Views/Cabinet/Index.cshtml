@@ -16,7 +16,7 @@
         <a class="nav-link @activeFirst" href="@Url.Action(nameof(CabinetController.Index), "Cabinet", new {tab = 1})" tabindex="@activeTab">Смена пароля</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link @activeSecond" href="@Url.Action(nameof(CabinetController.Index), "Cabinet", new {tab = 2})" tabindex="@activeTab">-</a>
+        <a class="nav-link @activeSecond" href="@Url.Action(nameof(CabinetController.Index), "Cabinet", new {tab = 2})" tabindex="@activeTab">Переписки</a>
     </li>
     <li class="nav-item">
         <a class="nav-link @activeThird" href="@Url.Action(nameof(CabinetController.Index), "Cabinet", new {tab = 3})" tabindex="@activeTab">-</a>
@@ -26,6 +26,14 @@
 @if (activeTab == "1" && ViewBag.IsSentToken != true)
 {
     await Html.RenderPartialAsync("_SentChangePasToken");
+}
+@if (activeTab == "2" && ViewBag.IsSentToken != true && Url.ActionContext.RouteData.Values["sentTo"] != null)
+{
+    await Html.RenderPartialAsync("_MessagesPartial");
+}
+@if (activeTab == "2" && ViewBag.IsSentToken != true && Url.ActionContext.RouteData.Values["sentTo"] == null)
+{
+    await Html.RenderPartialAsync("_ChatsPartial");
 }
 @if (ViewBag.IsSentToken == true)
 {

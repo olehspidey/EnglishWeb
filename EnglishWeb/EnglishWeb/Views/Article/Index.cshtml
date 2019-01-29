@@ -1,4 +1,5 @@
-﻿@model EnglishWeb.Core.Models.ViewModels.ArticleViewModel
+﻿@using EnglishWeb.Core.Models
+@model EnglishWeb.Core.Models.ViewModels.ArticleViewModel
 @{
     ViewData["Title"] = "Index";
 }
@@ -14,4 +15,15 @@
     <h4 class="mr-2">Автор:</h4>
     <h6>@Model.User.Name @Model.User.LastName</h6>
 </div>
+@if (User.Identity.Name != Model.User.UserName && User.IsInRole(UserRoles.User))
+{
+    <div>
+        <a class="btn btn-outline-primary" 
+           role="button"
+           asp-action="Index" asp-controller="Cabinet"
+           asp-route-tab="2"
+           asp-route-isSentRes="false"
+           asp-route-sentTo="@Model.User.Id">Написать учителю</a>
+    </div>
+}
 

@@ -1,0 +1,29 @@
+﻿@model List<EnglishWeb.Core.Models.ViewModels.ChatViewModel>
+@{
+    ViewData["Title"] = "_ChatsPartial";
+}
+
+<style>
+    .list {
+        padding: 2rem 15rem;
+    }
+
+    .list-group-item:hover {
+        background: #007bff;
+        color: white !important;
+    }
+</style>
+
+<div class="list-group list">
+    @foreach (var chat in Model)
+    {
+        <a asp-controller="Cabinet"
+           asp-action="Index"
+           asp-route-tab="2"
+           asp-route-isSentRes="false"
+           asp-route-sentTo="@chat.UserDestinationId"
+           asp-route-chatId="@chat.Id"
+           class="list-group-item list-group-item-action">@chat.Name</a>
+    }
+</div>
+
