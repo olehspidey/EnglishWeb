@@ -1,6 +1,6 @@
 {
-  "Port": 587,
-  "Host": "smtp.gmail.com",
-  "Email": "olehspidey2@gmail.com",
-  "Password": "30Spudi30"
+  "Port": "port", // int. Example 587
+  "Host": "smtp host", // string Example smtp.gmail.com
+  "Email": "email", // string Example test@gmail.com
+  "Password": "password" // string ******
 }
