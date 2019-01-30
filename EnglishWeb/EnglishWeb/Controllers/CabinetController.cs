@@ -53,22 +53,27 @@ namespace EnglishWeb.Controllers
             if (tab == 2 && sentTo != null && !isSentRes)
             {
                 var desUser = await _userManager.FindByIdAsync(sentTo.ToString());
+                
+                Chat chat = null;
 
-                var chat = new Chat
+                if (chatId == null && !isTeacher)
+                    chat = await _chatRepository.Table.FirstOrDefaultAsync(c => c.UserDestinationId == sentTo && c.UserOwnerId == user.Id);
+                if(chat == null && chatId != null)
+                   chat = await _chatRepository
+                       .Table
+                       .FirstOrDefaultAsync(c => c.Id == chatId);
+                else if(chat == null)
                 {
-                    Messages = new List<Message>(),
-                    Name = $"{user.UserName} {user.LastName} - {desUser.Name} {desUser.LastName}",
-                    UserDestinationId = desUser.Id,
-                    UserOwner = user,
-                    UserOwnerId = user.Id
-                };
-
-                if (chatId == null)
+                    chat = new Chat
+                    {
+                        Messages = new List<Message>(),
+                        Name = $"{user.UserName} {user.LastName} - {desUser.Name} {desUser.LastName}",
+                        UserDestinationId = desUser.Id,
+                        UserOwner = user,
+                        UserOwnerId = user.Id
+                    };
                     await _chatRepository.InsertAsync(chat);
-                else
-                    chat = await _chatRepository
-                        .Table
-                        .FirstOrDefaultAsync(c => c.Id == chatId);
+                }
 
                 var messages = chat
                     .Messages
@@ -82,6 +87,8 @@ namespace EnglishWeb.Controllers
                 })
                     .OrderBy(model => model.CreateTime)
                     .ToList();
+
+                RouteData.Values["chatId"] = chat.Id;
 
                 return View(messages);
             }
