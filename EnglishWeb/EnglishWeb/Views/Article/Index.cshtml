@@ -27,3 +27,8 @@
     </div>
 }
 
+@if (ViewBag.CanEdit == true)
+{
+    <a class="btn-primary btn mt-2" asp-controller="Article" asp-action="Edit" asp-route-id="@Model.Id">Редактировать</a>
+}
+

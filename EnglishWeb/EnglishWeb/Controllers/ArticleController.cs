@@ -64,15 +64,22 @@ namespace EnglishWeb.Controllers
         {
             if (id == null)
             {
-                ModelState.AddModelError("ArticleError", "Icorrect article");
+                ModelState.AddModelError("ArticleError", "Incorrect article");
 
                 return RedirectToAction(nameof(HomeController.Index), "Home");
             }
 
             var article = await _articleRepository.GetByIdAsync(id);
 
+            var user = await _userManager.FindByNameAsync(User.Identity.Name);
+
+            if(user == null)
+                return RedirectToAction(nameof(HomeController.Error), "Home");
+
             if (article == null)
                 return RedirectToAction(nameof(HomeController.Error), "Home");
+
+            ViewBag.CanEdit = article.UserId == user.Id;
 
             return View(_mapper.Map<Article, ArticleViewModel>(article));
         }
@@ -92,8 +99,18 @@ namespace EnglishWeb.Controllers
         [Authorize(Roles = UserRoles.Teacher)]
         [HttpGet("Create")]
         public IActionResult Create()
+            => View();
+
+        [Authorize(Roles = UserRoles.Teacher)]
+        [HttpGet("Edit/{id}")]
+        public async Task<IActionResult> Edit(Guid id)
         {
-            return View();
+            var article = await _articleRepository.GetByIdAsync(id);
+
+            if(article == null)
+                return RedirectToAction(nameof(HomeController.NotFound), "Home");
+
+            return View(_mapper.Map<Article, ArticleViewModel>(article));
         }
 
         [Authorize(Roles = UserRoles.Teacher)]
@@ -127,6 +144,32 @@ namespace EnglishWeb.Controllers
 
             ViewBag.Success = true;
             return RedirectToAction(nameof(Create), "Article");
+        }
+
+        [Authorize(Roles = UserRoles.Teacher)]
+        [HttpPost("Edit")]
+        public async Task<IActionResult> EditArticle(EditArticleViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return View("Edit");
+
+            var article = await _articleRepository.GetByIdAsync(model.Id);
+
+            if (article == null)
+            {
+                ModelState.AddModelError("ArticleError", "Article don't exist");
+
+                return View("Edit");
+            }
+
+            article.Language = model.Language;
+            article.Name = model.Name;
+            article.Text = model.Text;
+            article.Type = model.Type;
+
+            await _articleRepository.UpdateAsync(article);
+
+            return RedirectToAction(nameof(Index), new {id = model.Id});
         }
 
         [Authorize(Roles = UserRoles.Admin)]

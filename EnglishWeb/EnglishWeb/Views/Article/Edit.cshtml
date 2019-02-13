@@ -1,0 +1,55 @@
+﻿@using EnglishWeb.Core.Models.DomainModels
+@model EnglishWeb.Core.Models.ViewModels.ArticleViewModel
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Создать статью</h1>
+<br />
+
+<style>
+    .create-article-form {
+        padding: 0 15rem;
+    }
+
+    .create-article-form input, textarea, select {
+        margin-bottom: 2rem;
+    }
+
+    .create-article-form textarea {
+        max-height: 15rem;
+    }
+</style>
+
+<form class="create-article-form" asp-controller="Article" asp-action="EditArticle" method="post">
+    @if(ViewBag.Success == true)
+    {
+        <div class="alert alert-primary" role="alert">
+            Статья успешно отредактирована
+        </div>
+    }
+    @if(ViewBag.Success == false)
+    {
+        <div class="alert alert-danger" role="alert">
+            Ошибка. Невозможно добавить статью
+        </div>
+    }
+
+    @Html.ValidationSummary(true)
+    @Html.ValidationMessageFor(model => model.Name)
+    <input class="form-control" name="name" value="@Model.Name" placeholder="Введите название статьи" />
+    @Html.ValidationMessageFor(model => model.Text)
+    <textarea class="form-control" name="text" placeholder="Текст статьи">@Model.Text</textarea>
+    <select class="form-control" name="type">
+        <option value="@ArticleType.Orthography">Орфография</option>
+        <option value="@ArticleType.PartsOfSpeech">Части речи</option>
+    </select>
+    <select class="form-control" name="language">
+        @foreach (var lang in Html.GetEnumSelectList<Language>())
+        {
+            <option value="@lang.Value">@lang.Text</option>
+        }
+    </select>
+    <input name="id" value="@Model.Id" style="display: none"/>
+    <input class="btn btn-primary" type="submit" value="Сохранить" />
+</form>
