@@ -1,4 +1,5 @@
-﻿@using EnglishWeb.Core.Models.DomainModels
+﻿@using EnglishWeb.Core.Models
+@using EnglishWeb.Core.Models.DomainModels
 @model List<EnglishWeb.Core.Models.ViewModels.ArticleViewModel>
 @{
     ViewData["Title"] = "List";
@@ -68,9 +69,17 @@
     <div class="list-group articles-list">
         @foreach (var article in Model)
         {
-            <a class="list-group-item" asp-action="Index" asp-controller="Article" asp-route-id="@article.Id">
-                <h6>@article.Name</h6>
-                <small>@article.User.Name @article.User.LastName</small>
+            <a class="list-group-item d-flex justify-content-between" asp-action="Index" asp-controller="Article" asp-route-id="@article.Id">
+                <div>
+                    <h6>@article.Name</h6>
+                    <small>@article.User.Name @article.User.LastName</small>
+                </div>
+                @if (User.IsInRole(UserRoles.Admin))
+                {
+                    <form asp-controller="Article" asp-action="Delete" asp-route-id="@article.Id">
+                        <button class="btn btn-sm btn-danger" type="submit">Удалить</button>
+                    </form>
+                }
             </a>
         }
     </div>

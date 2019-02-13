@@ -128,5 +128,20 @@ namespace EnglishWeb.Controllers
             ViewBag.Success = true;
             return RedirectToAction(nameof(Create), "Article");
         }
+
+        [Authorize(Roles = UserRoles.Admin)]
+        [HttpPost("Delete/{id}")]
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            var article = await _articleRepository.GetByIdAsync(id);
+
+            if (article == null)
+                return RedirectToAction(nameof(HomeController.NotFound), "Home");
+
+            await _articleRepository.DeleteAsync(article);
+
+            return
+                RedirectToAction(nameof(List));
+        }
     }
 }

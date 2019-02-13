@@ -288,6 +288,20 @@ namespace EnglishWeb.Controllers
             });
         }
 
+        [Authorize(Roles = UserRoles.Admin)]
+        [HttpPost("Delete/{id}")]
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            var test = await _testsRepository.GetByIdAsync(id);
+
+            if (test == null)
+                return RedirectToAction(nameof(HomeController.NotFound), "Home");
+
+            await _testsRepository.DeleteAsync(test);
+
+            return RedirectToAction(nameof(List));
+        }
+
         [NonAction]
         private static (int, int, int) GetPassRadioResult(List<Question> questions, List<Guid> answersId)
         {
