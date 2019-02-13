@@ -47,5 +47,18 @@ namespace EnglishWeb.Controllers
 
             return RedirectToAction(nameof(Users), "Admin");
         }
+
+        [HttpPost("Delete/{id}")]
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            var user = await _userManager.FindByIdAsync(id.ToString());
+
+            if (user == null)
+                return RedirectToAction(nameof(HomeController.NotFound), "Home");
+
+            await _userManager.DeleteAsync(user);
+
+            return RedirectToAction(nameof(Users), "Admin");
+        }
     }
 }

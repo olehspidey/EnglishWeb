@@ -60,6 +60,9 @@
                                 <button class="btn btn-sm btn-outline-secondary mt-2" type="submit">Активировать</button>
                             </form>
                         }
+                        <form class="mt-2" asp-controller="Admin" asp-action="Delete" asp-route-id="@user.Id" method="post">
+                            <button class="btn btn-sm btn-danger">Удалить</button>
+                        </form>
                     </div>
                 </div>
             </a>
