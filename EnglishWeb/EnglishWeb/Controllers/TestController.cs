@@ -39,7 +39,7 @@ namespace EnglishWeb.Controllers
 
         [HttpGet("{id}")]
         [Authorize(Roles = UserRoles.UserTeacherAdmin)]
-        public async Task<IActionResult> Index(Guid? id)
+        public async Task<IActionResult> Index(Guid? id, bool repass = false)
         {
             if (id == null)
                 return RedirectToAction(nameof(HomeController.NotFound), "Home");
@@ -57,6 +57,7 @@ namespace EnglishWeb.Controllers
             var mappedTest = _mapper.Map<Test, TestViewModel>(test);
 
             mappedTest.IsComplated = user.PassedTests.Any(t => t.TestId == mappedTest.Id);
+            ViewBag.Repass = repass;
 
             return View(mappedTest);
         }

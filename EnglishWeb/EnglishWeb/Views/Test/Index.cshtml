@@ -20,7 +20,7 @@
     Error
 </div>
 
-@if (Model.IsComplated)
+@if (Model.IsComplated && !ViewBag.Repass)
 {
     <h4 class="text-center">Вы уже сдали етот тест</h4>
     <script>
@@ -42,7 +42,7 @@
             });
     </script>
 }
-else
+else if(ViewBag.Repass || !Model.IsComplated)
 {
     await Html.RenderPartialAsync($"_{Model.Type}TestFormPartial");
 }
@@ -52,4 +52,7 @@ else
     <h6 id="trueCount">as</h6>
     <h6 id="falseCount">as</h6>
     <small id="qestionsCount"></small>
+    <div class="mt-2">
+        <a class="btn btn-primary" href="@Url.Action(nameof(TestController.Index), new{id = Model.Id, repass = true})">Пересдать</a>
+    </div>
 </div>
