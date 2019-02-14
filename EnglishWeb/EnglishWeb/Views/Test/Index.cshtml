@@ -1,4 +1,5 @@
 ﻿@using EnglishWeb.Controllers
+@using EnglishWeb.Core.Models
 @model EnglishWeb.Core.Models.ViewModels.TestViewModel
 
 @{
@@ -45,6 +46,11 @@
 else if(ViewBag.Repass || !Model.IsComplated)
 {
     await Html.RenderPartialAsync($"_{Model.Type}TestFormPartial");
+}
+
+@if (User.IsInRole(UserRoles.Teacher))
+{
+    <a class="btn btn-success mt-2" asp-action="Edit" asp-route-id="@Model.Id">Редактировать</a>
 }
 
 <div id="result" class="mt-3" style="display: none">

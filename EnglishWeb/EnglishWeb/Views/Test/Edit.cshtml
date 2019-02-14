@@ -1,25 +1,10 @@
 ﻿@using EnglishWeb.Core.Models.DomainModels
+@model EnglishWeb.Core.Models.ViewModels.TestViewModel
 @{
-    ViewData["Title"] = "CreateRadio";
+    ViewData["Title"] = "Edit";
 }
 
-@{
-    var testType = (int)ViewBag.TestType;
-    var language = (int)ViewBag.Language;
-}
-
-@section Scripts
-{
-    <script type="text/javascript" src="~/js/Test/createTest.js"></script>
-}
-
-<style>
-    .test-form {
-        padding: 2rem 15rem;
-    }
-</style>
-
-<h1>Создать @ViewBag.TestType тест</h1>
+<h1>Редактор тестов</h1>
 
 <div id="successMessage" class="alert alert-primary" style="display:none" role="alert">
     Success
@@ -36,7 +21,7 @@
             <label q-number="1">Вопрос 1</label>
             <input class="form-control q-name" placeholder="Введите название вопроса" />
             <label>Ответы</label>
-            @if (ViewBag.TestType == TestType.Radio)
+            @if (Model.Type == TestType.Radio)
             {
                 <div class="d-flex align-items-center q-a-box">
                     <input class="form-control q-answer mr-2" placeholder="Введите ответ" />
@@ -55,7 +40,7 @@
             {
                 <div class="d-flex align-items-center q-a-box">
                     <input class="form-control q-answer mr-2" placeholder="Введите ответ" />
-                    <input type="checkbox" checked="checked" disabled="disabled"/>
+                    <input type="checkbox" checked="checked" disabled="disabled" />
                 </div>
             }
         </div>
@@ -64,8 +49,3 @@
     <input id="createButton" class="btn btn-primary mt-2" type="button" role="button" value="Создать" />
 </div>
 
-<script type="text/javascript">
-    document.addEventListener("DOMContentLoaded", function() {
-        init(Number(@testType), Number(@language));
-    });
-</script>

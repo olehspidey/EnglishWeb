@@ -189,6 +189,18 @@ namespace EnglishWeb.Controllers
             return View("CreateRadioAndInput");
         }
 
+        [HttpGet("Edit/{id}")]
+        [Authorize(Roles = UserRoles.Teacher)]
+        public async Task<IActionResult> Edit(Guid id)
+        {
+            var test = await _testsRepository.GetByIdAsync(id);
+
+            if (test == null)
+                return RedirectToAction(nameof(HomeController.NotFound), "Home");
+
+            return View(_mapper.Map<Test, TestViewModel>(test));
+        }
+
         [HttpPost("Create")]
         [Authorize(Roles = UserRoles.Teacher)]
         public async Task<IActionResult> Create([FromForm] CreateTestViewModel model)
@@ -301,6 +313,62 @@ namespace EnglishWeb.Controllers
             await _testsRepository.DeleteAsync(test);
 
             return RedirectToAction(nameof(List));
+        }
+
+        [Authorize(Roles = UserRoles.Teacher)]
+        [HttpPut("Edit")]
+        public async Task<IActionResult> Edit(EditTestViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest("Invalid model");
+
+            var test = await _testsRepository.GetByIdAsync(model.Id);
+
+            if (test == null)
+                return BadRequest("Test doesn't exist");
+
+            test.Language = model.Language;
+            test.Name = model.Name;
+            test.Type = model.Type;
+
+            try
+            {
+                model.Questions = JsonConvert.DeserializeObject<List<QuestionViewModel>>(model.QStringified);
+            }
+            catch (Exception)
+            {
+                return BadRequest("Invalid model. Invalid questions");
+            }
+
+            if (model.Type == TestType.Image)
+            {
+                if (model.Images == null)
+                    return BadRequest("Invalid model. Please add all images");
+
+                var index = 0;
+
+                model.Questions.ForEach(question =>
+                {
+                    question.Answers.ForEach(async answer =>
+                    {
+                        using (var stream = model.Images[index].OpenReadStream())
+                        {
+                            answer.Image = new byte[stream.Length];
+                            await stream.ReadAsync(answer.Image);
+                        }
+                        index++;
+                    });
+                });
+            }
+
+            test.Questions = _mapper.Map<List<QuestionViewModel>, List<Question>>(model.Questions);
+
+            var updatedResult = await _testsRepository.UpdateAsync(test);
+
+            if (updatedResult <= 0)
+                return BadRequest("Can't update");
+
+            return Json("Success");
         }
 
         [NonAction]
