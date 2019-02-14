@@ -28,17 +28,6 @@ namespace EnglishWeb.Controllers
             _userManager = userManager;
         }
 
-        //[HttpGet("List")]
-        //public async Task<IActionResult> List()
-        //{
-        //    var articles = await _articleRepository
-        //        .Table
-        //        .Take(20)
-        //        .ToListAsync();
-
-        //    return View(_mapper.Map<List<Article>, List<ArticleViewModel>>(articles));
-        //}
-
         // todo issue
         [HttpGet("List")]
         public async Task<IActionResult> List(Language language, ArticleType type, string query)
@@ -110,7 +99,7 @@ namespace EnglishWeb.Controllers
             if(article == null)
                 return RedirectToAction(nameof(HomeController.NotFound), "Home");
 
-            return View(_mapper.Map<Article, ArticleViewModel>(article));
+            return View(_mapper.Map<Article, EditArticleViewModel>(article));
         }
 
         [Authorize(Roles = UserRoles.Teacher)]
@@ -151,7 +140,7 @@ namespace EnglishWeb.Controllers
         public async Task<IActionResult> EditArticle(EditArticleViewModel model)
         {
             if (!ModelState.IsValid)
-                return View("Edit");
+                return View("Edit", model);
 
             var article = await _articleRepository.GetByIdAsync(model.Id);
 
@@ -159,7 +148,7 @@ namespace EnglishWeb.Controllers
             {
                 ModelState.AddModelError("ArticleError", "Article don't exist");
 
-                return View("Edit");
+                return View("Edit", model);
             }
 
             article.Language = model.Language;
