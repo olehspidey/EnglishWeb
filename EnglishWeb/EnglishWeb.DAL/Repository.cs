@@ -46,10 +46,7 @@ namespace EnglishWeb.DAL
         {
             try
             {
-                foreach (var entity in entities)
-                {
-                    _context.Entry(entity).State = EntityState.Modified;
-                }
+                Entities.UpdateRange(entities);
 
                 return await _context.SaveChangesAsync();
             }

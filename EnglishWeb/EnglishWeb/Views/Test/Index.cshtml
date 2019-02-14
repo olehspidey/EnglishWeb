@@ -48,7 +48,7 @@ else if(ViewBag.Repass || !Model.IsComplated)
     await Html.RenderPartialAsync($"_{Model.Type}TestFormPartial");
 }
 
-@if (User.IsInRole(UserRoles.Teacher))
+@if (User.IsInRole(UserRoles.Teacher) && ViewBag.CanEdit == true)
 {
     <a class="btn btn-success mt-2" asp-action="Edit" asp-route-id="@Model.Id">Редактировать</a>
 }

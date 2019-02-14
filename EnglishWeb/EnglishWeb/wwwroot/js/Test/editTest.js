@@ -1,9 +1,7 @@
-﻿function init(testType, language) {
+﻿function init(testType, language, id, questionsNumber = 1) {
     $(document).ready(() => {
         bind();
     });
-
-    var questionsNumber = 1;
 
     function bind() {
         $("#createButton").on("click", create);
@@ -70,7 +68,9 @@
         templateClone.find("[q-number]").attr("q-number", questionsNumber);
         templateClone.attr("id", "qTemplate" + questionsNumber);
         templateClone.find(".q-name").val("");
+        templateClone.find(".q-name").attr("q-id", "00000000-0000-0000-0000-000000000000");
         templateClone.find(".q-answer").val("");
+        templateClone.find(".q-answer").attr("q-ansver-id", "00000000-0000-0000-0000-000000000000");
         $(".questions").append(templateClone);
 
         binCheckBoxed(templateClone);
@@ -78,15 +78,18 @@
 
     function generateModel() {
         var model = {
+            id: id,
             name: $("#testName").val(),
             questions: [],
             type: testType,
             images: []
         };
         var form = new FormData();
+
         form.append("name", model.name);
         form.append("type", model.type);
         form.append("language", language);
+        form.append("id", model.id);
 
         for (var i = 1; i < questionsNumber + 1; i++) {
             var template = $("#qTemplate" + i);
@@ -95,6 +98,7 @@
 
             for (var j = 0; j < answersBoxes.length; j++) {
                 answers.push({
+                    id: $(answersBoxes[j]).find(".q-answer").attr("q-ansver-id"),
                     text: $(answersBoxes[j]).find(".q-answer").val(),
                     isTrue: $(answersBoxes[j]).find("[type='checkbox']").is(":checked")
                 });
@@ -103,6 +107,7 @@
             }
 
             model.questions.push({
+                id: template.find(".q-name").attr("q-id"),
                 name: template.find(".q-name").val(),
                 answers
             });

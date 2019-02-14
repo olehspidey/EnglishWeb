@@ -6,6 +6,16 @@
 
 <h1>Редактор тестов</h1>
 
+@section Scripts
+{
+<script src="~/js/Test/editTest.js"></script>
+}
+
+@{
+    var testType = (int)Model.Type;
+    var testLanguage = (int) Model.Language;
+}
+
 <div id="successMessage" class="alert alert-primary" style="display:none" role="alert">
     Success
 </div>
@@ -15,37 +25,65 @@
 </div>
 
 <div class="test-form">
-    <input class="form-control" id="testName" placeholder="Введите название теста" />
+    <input class="form-control" id="testName" placeholder="Введите название теста" value="@Model.Name" />
     <div class="questions">
-        <div class="q-template" id="qTemplate1">
-            <label q-number="1">Вопрос 1</label>
-            <input class="form-control q-name" placeholder="Введите название вопроса" />
-            <label>Ответы</label>
-            @if (Model.Type == TestType.Radio)
-            {
-                <div class="d-flex align-items-center q-a-box">
-                    <input class="form-control q-answer mr-2" placeholder="Введите ответ" />
-                    <input type="checkbox" />
-                </div>
-                <div class="d-flex align-items-center q-a-box">
-                    <input class="form-control q-answer mr-2" placeholder="Введите ответ" />
-                    <input type="checkbox" />
-                </div>
-                <div class="d-flex align-items-center q-a-box">
-                    <input class="form-control q-answer mr-2" placeholder="Введите ответ" />
-                    <input type="checkbox" />
-                </div>
-            }
-            else
-            {
-                <div class="d-flex align-items-center q-a-box">
-                    <input class="form-control q-answer mr-2" placeholder="Введите ответ" />
-                    <input type="checkbox" checked="checked" disabled="disabled" />
-                </div>
-            }
-        </div>
+        @{
+            var qIndex = 1;
+        }
+        @foreach (var q in Model.Questions)
+        {
+            var templateId = $"qTemplate{qIndex}";
+
+            <div class="q-template" id="@templateId">
+                <label q-number="@qIndex">Вопрос @qIndex</label>
+                <input class="form-control q-name" q-id="@q.Id" value="@q.Name" placeholder="Введите название вопроса" />
+                <label>Ответы</label>
+                @if (Model.Type == TestType.Radio)
+                {
+                    foreach (var answer in q.Answers)
+                    {
+                        var isChecked = answer.IsTrue ? "checked" : "false";
+
+                        <div class="d-flex align-items-center q-a-box">
+                            <input class="form-control q-answer mr-2" q-ansver-id="@answer.Id" value="@answer.Text" placeholder="Введите ответ" />
+                            <input type="checkbox" @isChecked/>
+                        </div>
+                    }
+                }
+                @if(Model.Type == TestType.Input)
+                {
+                    foreach (var answer in q.Answers)
+                    {
+                        <div class="d-flex align-items-center q-a-box">
+                        <input class="form-control q-answer mr-2" q-ansver-id="@answer.Id" value="@answer.Text" placeholder="Введите ответ" />
+                        <input type="checkbox" checked="checked" disabled="disabled" />
+                    </div>
+                    }
+                }
+                @if (Model.Type == TestType.Image)
+                {
+                    foreach (var answer in q.Answers)
+                    {
+                        var isChecked = answer.IsTrue ? "checked" : "false";
+
+                        <div class="d-flex align-items-center q-a-box">
+                            <input class="form-control-file q-answer-img mr-2" q-ansver-id="@answer.Id" type="file" accept="image/*" />
+                            <input type="checkbox" @isChecked/>
+                        </div>
+
+                    }
+                }
+            </div>
+            ++qIndex;
+        }
     </div>
     <button class="btn btn-success mt-2" id="newQuestion">Добавить новый вопрос</button>
-    <input id="createButton" class="btn btn-primary mt-2" type="button" role="button" value="Создать" />
+    <input id="createButton" class="btn btn-primary mt-2" type="button" role="button" value="Обновить" />
 </div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        init(@testType, @testLanguage, '@Model.Id', @Model.Questions.Count);
+    });
+</script>
 

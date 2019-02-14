@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using Newtonsoft.Json;
 
 namespace EnglishWeb.Controllers
@@ -22,19 +23,22 @@ namespace EnglishWeb.Controllers
         private readonly IRepository<Test> _testsRepository;
         private readonly IRepository<TestAnswer> _answersRepository;
         private readonly IRepository<PassedTest> _passedTestsRepository;
+        private readonly IRepository<Question> _questionsRepository;
         private readonly IMapper _mapper;
 
         public TestController(UserManager<User> userManager,
             IMapper mapper,
             IRepository<Test> testsRepository,
             IRepository<TestAnswer> answersRepository,
-            IRepository<PassedTest> passedTestsRepository)
+            IRepository<PassedTest> passedTestsRepository,
+            IRepository<Question> questionsRepository)
         {
             _userManager = userManager;
             _mapper = mapper;
             _testsRepository = testsRepository;
             _answersRepository = answersRepository;
             _passedTestsRepository = passedTestsRepository;
+            _questionsRepository = questionsRepository;
         }
 
         [HttpGet("{id}")]
@@ -58,6 +62,7 @@ namespace EnglishWeb.Controllers
 
             mappedTest.IsComplated = user.PassedTests.Any(t => t.TestId == mappedTest.Id);
             ViewBag.Repass = repass;
+            ViewBag.CanEdit = user.Tests.Any(t => t.Id == test.Id);
 
             return View(mappedTest);
         }
@@ -198,7 +203,11 @@ namespace EnglishWeb.Controllers
             if (test == null)
                 return RedirectToAction(nameof(HomeController.NotFound), "Home");
 
-            return View(_mapper.Map<Test, TestViewModel>(test));
+            var mappedTest = _mapper.Map<Test, TestViewModel>(test);
+
+            mappedTest.Questions.Reverse();
+
+            return View(mappedTest);
         }
 
         [HttpPost("Create")]
@@ -327,9 +336,7 @@ namespace EnglishWeb.Controllers
             if (test == null)
                 return BadRequest("Test doesn't exist");
 
-            test.Language = model.Language;
-            test.Name = model.Name;
-            test.Type = model.Type;
+            var userId = test.UserId;
 
             try
             {
@@ -361,12 +368,15 @@ namespace EnglishWeb.Controllers
                 });
             }
 
-            test.Questions = _mapper.Map<List<QuestionViewModel>, List<Question>>(model.Questions);
-
-            var updatedResult = await _testsRepository.UpdateAsync(test);
-
-            if (updatedResult <= 0)
-                return BadRequest("Can't update");
+            var questions = _mapper.Map<List<QuestionViewModel>, List<Question>>(model.Questions)
+                .Select(question =>
+                {
+                    question.TestId = test.Id;
+                    return question;
+                })
+                .ToList();
+            await _testsRepository.UpdateAsync(test);
+            await _questionsRepository.UpdateAsync(questions);
 
             return Json("Success");
         }
