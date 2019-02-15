@@ -31,7 +31,8 @@ namespace EnglishWeb.Controllers
             => View(_mapper.Map<List<User>, List<ShortUserViewModel>>(await _userManager
                 .Users
                 .Take(20)
-                .ToListAsync()));
+                .ToListAsync())
+               );
 
         [HttpPost("Activate/{id}")]
         public async Task<IActionResult> Activate(Guid id)

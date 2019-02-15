@@ -163,7 +163,7 @@ namespace EnglishWeb.Controllers
             if (user == null)
                 return RedirectToAction(nameof(HomeController.NotFound), "Home");
 
-            var destUser = await _userManager.FindByIdAsync(model.ToId.ToString());
+            var destUser = await _userManager.FindByIdAsync(model.ToId);
 
             if(destUser == null)
                 return RedirectToAction(nameof(HomeController.NotFound), "Home");

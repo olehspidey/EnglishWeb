@@ -59,7 +59,6 @@ namespace EnglishWeb.Controllers
             }
 
             var article = await _articleRepository.GetByIdAsync(id);
-
             var user = await _userManager.FindByNameAsync(User.Identity.Name);
 
             if(user == null)

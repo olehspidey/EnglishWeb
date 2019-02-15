@@ -20,13 +20,13 @@
     }
 
     function create() {
-        var model = generateModel();
-        var succesMessage = $("#successMessage");
+        const model = generateModel();
+        var successMessage = $("#successMessage");
         var errorMessage = $("#errorMessage");
-        var checkingResult = checkAllFields();
+        const checkingResult = checkAllFields();
 
         if (!checkingResult.status) {
-            succesMessage.hide();
+            successMessage.hide();
             errorMessage.html(checkingResult.message);
             errorMessage.show();
 
@@ -45,22 +45,22 @@
             contentType: false,
             success: resp => {
                 if (resp === "Success") {
-                    succesMessage.html("Тест обновлен успешно");
+                    successMessage.html("Тест обновлен успешно");
                     errorMessage.hide();
-                    succesMessage.show();
+                    successMessage.show();
                 }
             },
             error: er => {
                 errorMessage.html(er.responseText);
                 errorMessage.show();
-                succesMessage.hide();
+                successMessage.hide();
             }
         });
     }
 
     function addNewQuestion() {
-        var template = $("#qTemplate" + questionsNumber);
-        var templateClone = template.clone();
+        const template = $("#qTemplate" + questionsNumber);
+        const templateClone = template.clone();
 
         ++questionsNumber;
 
@@ -77,26 +77,26 @@
     }
 
     function generateModel() {
-        var model = {
+        const model = {
             id: id,
             name: $("#testName").val(),
             questions: [],
             type: testType,
             images: []
         };
-        var form = new FormData();
+        const form = new FormData();
 
         form.append("name", model.name);
         form.append("type", model.type);
         form.append("language", language);
         form.append("id", model.id);
 
-        for (var i = 1; i < questionsNumber + 1; i++) {
-            var template = $("#qTemplate" + i);
-            var answersBoxes = template.find(".q-a-box");
-            var answers = [];
+        for (let i = 1; i < questionsNumber + 1; i++) {
+            const template = $(`#qTemplate${i}`);
+            const answersBoxes = template.find(".q-a-box");
+            const answers = [];
 
-            for (var j = 0; j < answersBoxes.length; j++) {
+            for (let j = 0; j < answersBoxes.length; j++) {
                 answers.push({
                     id: $(answersBoxes[j]).find(".q-answer").attr("q-ansver-id"),
                     text: $(answersBoxes[j]).find(".q-answer").val(),
@@ -124,7 +124,7 @@
                 status: false
             };
 
-        var templates = $(".q-template");
+        const templates = $(".q-template");
 
         if (!templates.length)
             return {
@@ -132,8 +132,8 @@
                 status: false
             };
 
-        for (var i = 0; i < templates.length; i++) {
-            var questionName = $(templates[i]).find(".q-name").val();
+        for (let i = 0; i < templates.length; i++) {
+            const questionName = $(templates[i]).find(".q-name").val();
 
             if (!checkField(questionName))
                 return {
@@ -141,11 +141,11 @@
                     status: false
                 };
 
-            var answers = $(templates[i]).find(".q-answer");
+            const answers = $(templates[i]).find(".q-answer");
 
             // if not image test
             if (testType !== 1) {
-                for (var j = 0; j < answers.length; j++) {
+                for (let j = 0; j < answers.length; j++) {
                     if (!checkField($(answers[j]).val()))
                         return {
                             message: "Please fill all answers. Answer name length must be > 2",

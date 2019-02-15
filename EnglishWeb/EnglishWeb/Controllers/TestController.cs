@@ -11,7 +11,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Internal;
 using Newtonsoft.Json;
 
 namespace EnglishWeb.Controllers
@@ -203,6 +202,14 @@ namespace EnglishWeb.Controllers
             if (test == null)
                 return RedirectToAction(nameof(HomeController.NotFound), "Home");
 
+            var user = await _userManager.FindByNameAsync(User.Identity.Name);
+
+            if(user == null)
+                return RedirectToAction(nameof(HomeController.NotFound), "Home");
+
+            if(user.Tests.All(t => t.Id != test.Id))
+                return RedirectToAction(nameof(HomeController.NotFound), "Home");
+
             var mappedTest = _mapper.Map<Test, TestViewModel>(test);
 
             mappedTest.Questions.Reverse();
@@ -271,7 +278,7 @@ namespace EnglishWeb.Controllers
         public async Task<IActionResult> Pass(PassTestViewModel model)
         {
             if (!ModelState.IsValid)
-                return BadRequest("Inalid model");
+                return BadRequest("Invalid model");
 
             var test = await _testsRepository.GetByIdAsync(model.Id);
 
@@ -290,7 +297,7 @@ namespace EnglishWeb.Controllers
             if (model.Type == TestType.Input)
                 result = GetPassInputResult(test.Questions, model.Answers);
 
-            var existedTest = user.PassedTests.FirstOrDefault((passedTest => passedTest.TestId == test.Id));
+            var existedTest = user.PassedTests.FirstOrDefault(passedTest => passedTest.TestId == test.Id);
 
             if (existedTest != null)
             {
@@ -336,8 +343,6 @@ namespace EnglishWeb.Controllers
             if (test == null)
                 return BadRequest("Test doesn't exist");
 
-            var userId = test.UserId;
-
             try
             {
                 model.Questions = JsonConvert.DeserializeObject<List<QuestionViewModel>>(model.QStringified);
@@ -375,8 +380,14 @@ namespace EnglishWeb.Controllers
                     return question;
                 })
                 .ToList();
-            await _testsRepository.UpdateAsync(test);
-            await _questionsRepository.UpdateAsync(questions);
+
+            var updateTestResult = await _testsRepository.UpdateAsync(test);
+            var updateQuestionResult = await _questionsRepository.UpdateAsync(questions);
+
+            if (updateQuestionResult <= 0)
+                return BadRequest("Can't update question");
+            if (updateTestResult <= 0)
+                return BadRequest("Can't update test");
 
             return Json("Success");
         }

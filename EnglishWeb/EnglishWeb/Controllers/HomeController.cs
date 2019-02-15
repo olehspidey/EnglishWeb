@@ -16,6 +16,7 @@ namespace EnglishWeb.Controllers
         public IActionResult Error()
             => View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
 
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public new IActionResult NotFound()
             => View();
     }
